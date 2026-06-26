@@ -2,7 +2,32 @@ import { el } from './dom';
 import { renderBlocks } from './blocks';
 import { JournalStore } from './journal';
 import { PullMeter } from './pull';
+import { nextTeaser } from './scenes';
 import type { StoryEngine } from './story';
+
+/** What the result screen needs to namespace its storage and hand off to the
+ *  next ordeal. `nextTitle`/`onNext` are present only when another ordeal follows. */
+export interface ResultContext {
+  ordealId: string;
+  nextTitle?: string;
+  onNext?: () => void;
+}
+
+// Flush the in-progress reflection if the tab is hidden/closed within the
+// debounce window, so the tail of a note isn't lost. Wired exactly once for the
+// app's lifetime (not per render) and always flushes whichever ordeal's journal
+// is currently on screen — so navigating between ordeals doesn't leak listeners.
+let activeFlush: (() => void) | null = null;
+let flushWired = false;
+function wireFlushOnce(): void {
+  if (flushWired) return;
+  flushWired = true;
+  const flush = () => activeFlush?.();
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flush();
+  });
+}
 
 /** Inline SVG axis glyphs (shield = survivability, megaphone = self-advocacy). */
 const AXIS_ICON: Record<string, string> = {
@@ -15,10 +40,17 @@ const AXIS_ICON: Record<string, string> = {
 /** Final screen: two scored axes + trade-off readout and a client-side reflection
  *  capture. Renders only what the engine accumulated; no network, no CTA. */
 export class ResultScreen {
-  private readonly journal = new JournalStore('ordeal1-reflection');
-  private readonly pull = new PullMeter('ordeal1-pull');
+  private readonly journal: JournalStore;
+  private readonly pull: PullMeter;
 
-  constructor(private readonly root: HTMLElement, private readonly engine: StoryEngine) {}
+  constructor(
+    private readonly root: HTMLElement,
+    private readonly engine: StoryEngine,
+    private readonly ctx: ResultContext,
+  ) {
+    this.journal = new JournalStore(`${ctx.ordealId}-reflection`);
+    this.pull = new PullMeter(`${ctx.ordealId}-pull`);
+  }
 
   show(): void {
     this.pull.recordPlay();
@@ -50,14 +82,23 @@ export class ResultScreen {
     ta.value = this.journal.read();
     ta.setAttribute('aria-label', 'Which moment landed hardest?');
     ta.addEventListener('input', () => this.journal.write(ta.value));
-    // Flush the pending note if the tab is hidden/closed within the debounce
-    // window, so the tail of a reflection isn't lost.
-    window.addEventListener('pagehide', () => this.journal.flush());
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') this.journal.flush();
-    });
+    activeFlush = () => this.journal.flush();
+    wireFlushOnce();
     card.appendChild(label);
     card.appendChild(ta);
+
+    // Hand off to the next ordeal, or tease that the run continues later.
+    if (this.ctx.nextTitle && this.ctx.onNext) {
+      const next = el('button', 'next', `Next ordeal → ${this.ctx.nextTitle}`) as HTMLButtonElement;
+      next.type = 'button';
+      next.addEventListener('click', () => {
+        this.journal.flush();
+        this.ctx.onNext!();
+      });
+      card.appendChild(next);
+    } else {
+      card.appendChild(el('p', 'teaser', nextTeaser));
+    }
 
     this.root.appendChild(card);
   }

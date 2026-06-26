@@ -1,5 +1,5 @@
 import { el } from './dom';
-import { ResultScreen } from './result';
+import { ResultScreen, type ResultContext } from './result';
 import { renderBlocks } from './blocks';
 import type { Beat } from './scenes/types';
 import type { StoryEngine } from './story';
@@ -8,11 +8,15 @@ import type { StoryEngine } from './story';
  *  call cards, data chips) + up to 4 reply-style choice buttons; hands off to the
  *  ResultScreen once the engine reaches a terminal passage. */
 export class UIRenderer {
-  constructor(private readonly root: HTMLElement, private readonly engine: StoryEngine) {}
+  constructor(
+    private readonly root: HTMLElement,
+    private readonly engine: StoryEngine,
+    private readonly ctx: ResultContext,
+  ) {}
 
   render(): void {
     if (this.engine.isEnded()) {
-      new ResultScreen(this.root, this.engine).show();
+      new ResultScreen(this.root, this.engine, this.ctx).show();
       return;
     }
 
