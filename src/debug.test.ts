@@ -13,10 +13,9 @@ describe('playtest debug readout', () => {
     window.history.replaceState({}, '', '/');
   });
 
-  it('formats the pull signal, guarding divide-by-zero', () => {
-    expect(pullReadout({ plays: 0, cta_clicks: 0 })).toBe('plays 0 · CTA 0 · pull 0%');
-    expect(pullReadout({ plays: 4, cta_clicks: 2 })).toBe('plays 4 · CTA 2 · pull 50%');
-    expect(pullReadout({ plays: 3, cta_clicks: 1 })).toBe('plays 3 · CTA 1 · pull 33%');
+  it('formats the play count', () => {
+    expect(pullReadout({ plays: 0, cta_clicks: 0 })).toBe('plays 0');
+    expect(pullReadout({ plays: 4, cta_clicks: 2 })).toBe('plays 4');
   });
 
   it('detects the ?debug flag from the query string', () => {
@@ -37,11 +36,10 @@ describe('playtest debug readout', () => {
     window.history.replaceState({}, '', '/?debug');
     const pull = new PullMeter('ordeal1-pull');
     pull.recordPlay();
-    pull.recordCtaClick();
 
     const panel = mountDebugPanel();
     expect(panel).not.toBeNull();
     expect(document.querySelector('.debug')).not.toBeNull();
-    expect(panel!.textContent).toContain('plays 1 · CTA 1 · pull 100%');
+    expect(panel!.textContent).toContain('plays 1');
   });
 });

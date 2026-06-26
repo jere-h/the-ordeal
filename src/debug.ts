@@ -7,10 +7,9 @@ import { PullMeter, type PullCounters } from './pull';
 // readout a facilitator can glance at — or copy as JSON — at the end of a
 // session. Inert (not mounted) during a normal play.
 
-/** Pure, testable one-line summary of the behavioral pull signal. */
+/** Pure, testable one-line summary of the play count (the CTA pull signal was removed). */
 export function pullReadout(c: PullCounters): string {
-  const pct = c.plays ? Math.round((c.cta_clicks / c.plays) * 100) : 0;
-  return `plays ${c.plays} · CTA ${c.cta_clicks} · pull ${pct}%`;
+  return `plays ${c.plays}`;
 }
 
 export function isDebug(search: string = location.search): boolean {

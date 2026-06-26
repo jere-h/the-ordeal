@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ordeal1 } from './scenes/ordeal1';
 import type { Scene } from './scenes/types';
+import { blockText } from './scenes/types';
 import { StoryEngine } from './story';
 import { JournalStore } from './journal';
 import { PullMeter } from './pull';
@@ -59,7 +60,8 @@ describe('Ordeal #1 scene', () => {
   });
 
   it('every root→terminal path reaches the single shared result passage', () => {
-    const resultText = ordeal1.passages.find((p) => p.id === 'result')!.text;
+    const result = ordeal1.passages.find((p) => p.id === 'result')!;
+    const resultText = result.blocks.map(blockText).join('\n\n');
     paths.forEach((indices) => {
       const engine = play(indices);
       expect(engine.isEnded()).toBe(true);

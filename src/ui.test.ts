@@ -3,8 +3,9 @@ import { ordeal1 } from './scenes/ordeal1';
 import { StoryEngine } from './story';
 import { UIRenderer } from './ui';
 
-/** Full DOM play-through in jsdom: render → click a choice → click continue →
- *  assert the result screen wiring (scores, reflection, pull CTA). */
+/** Full DOM play-through in jsdom: render → click a first choice → click the
+ *  second-decision choice → click continue → assert the messaged rendering and
+ *  the result screen wiring (beat indicator, message bubbles, scores, no CTA). */
 describe('UI play-through (DOM)', () => {
   let root: HTMLElement;
 
@@ -14,18 +15,28 @@ describe('UI play-through (DOM)', () => {
     root = document.getElementById('app')!;
   });
 
-  it('renders the setup with four choice buttons', () => {
+  it('renders the setup beat with a data chip and four choice buttons', () => {
     new UIRenderer(root, new StoryEngine(ordeal1)).render();
-    const buttons = root.querySelectorAll('button.choice');
-    expect(buttons).toHaveLength(4);
-    expect(root.querySelector('.passage')?.textContent).toContain('overstated by twelve percent');
+
+    expect(root.querySelectorAll('button.choice')).toHaveLength(4);
+    // Beat indicator shows the first beat of three.
+    expect(root.querySelector('.beat-label')?.textContent).toContain('The mistake · 1 of 3');
+    expect(root.querySelectorAll('.beat-dot')).toHaveLength(3);
+    expect(root.querySelectorAll('.beat-dot.on')).toHaveLength(1);
+    // The bug is rendered as a data chip, not a paragraph.
+    expect(root.querySelector('.data-chip')?.textContent).toContain('+12%');
+    expect(root.querySelector('.narration')?.textContent).toContain('six weeks in');
   });
 
-  it('plays a two-decision branch through to a result screen with both axes and a working CTA', () => {
+  it('renders escalation messages as bubbles and plays through to a result with both axes', () => {
     new UIRenderer(root, new StoryEngine(ordeal1)).render();
 
-    // First decision: "escalate" (index 2) -> the escalation beat (second decision).
+    // First decision: "escalate" (index 2) -> the proper-channel escalation beat.
     (root.querySelectorAll('button.choice')[2] as HTMLButtonElement).click();
+    expect(root.querySelector('.beat-label')?.textContent).toContain('The escalation · 2 of 3');
+    // The manager's pressure arrives as message bubbles (call channel).
+    expect(root.querySelectorAll('.msg').length).toBeGreaterThanOrEqual(1);
+    expect(root.querySelector('.msg--call')).not.toBeNull();
     const secondDecision = root.querySelectorAll('button.choice');
     expect(secondDecision).toHaveLength(2);
 
@@ -45,12 +56,8 @@ describe('UI play-through (DOM)', () => {
     // Reaching the result counts one play.
     expect(JSON.parse(localStorage.getItem('ordeal1-pull')!).plays).toBe(1);
 
-    // The pull CTA records a click and reveals the teaser.
-    const cta = root.querySelector('button.cta') as HTMLButtonElement;
-    expect(root.querySelector('.teaser')?.classList.contains('hidden')).toBe(true);
-    cta.click();
-    expect(root.querySelector('.teaser')?.classList.contains('hidden')).toBe(false);
-    expect(JSON.parse(localStorage.getItem('ordeal1-pull')!).cta_clicks).toBe(1);
-    expect(cta.disabled).toBe(true);
+    // The Ordeal-#2 CTA was removed.
+    expect(root.querySelector('button.cta')).toBeNull();
+    expect(root.querySelector('.teaser')).toBeNull();
   });
 });

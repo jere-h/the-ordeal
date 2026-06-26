@@ -19,9 +19,37 @@ export interface Choice {
   to: PassageId;
 }
 
+/**
+ * A passage's content is a list of typed blocks instead of one prose blob, so the
+ * UI can render the crisis the way it is actually experienced — as messages, a
+ * phone call, a query result — rather than a wall of paragraphs. The model stays
+ * presentation-agnostic (no markup, no class names): how a `message` becomes a
+ * chat bubble lives entirely in the renderer.
+ */
+export type Block =
+  /** A short line of scene-setting / interior prose. */
+  | { kind: 'narration'; text: string }
+  /**
+   * One message in the crisis: a phone call, a DM, a Slack post, a line in
+   * standup. `via` lets the renderer pick the right treatment; `self: true`
+   * marks something the player says/sends (rendered as their own bubble).
+   */
+  | { kind: 'message'; from: string; via: 'call' | 'dm' | 'slack' | 'post' | 'standup'; time?: string; text: string; self?: boolean }
+  /** A monospace data/query-result chip (e.g. the refund fan-out). */
+  | { kind: 'data'; label?: string; lines: string[] };
+
+/** Position of a passage in the arc, for the beat-progress indicator. Terminal passages omit it. */
+export interface Beat {
+  n: number;
+  of: number;
+  label: string;
+}
+
 export interface Passage {
   id: PassageId;
-  text: string;
+  blocks: Block[];
+  /** Drives the progress indicator; omitted on the terminal result passage. */
+  beat?: Beat;
   /** A terminal passage omits `choices` — that is how the engine detects the end. */
   choices?: Choice[];
 }
@@ -30,4 +58,16 @@ export interface Scene {
   start: PassageId;
   axes: ['survivability', 'self_advocacy'];
   passages: Passage[];
+}
+
+/** Flatten a block to plain text — used for the accessibility/text fallback and tests. */
+export function blockText(b: Block): string {
+  switch (b.kind) {
+    case 'narration':
+      return b.text;
+    case 'message':
+      return `${b.from}: ${b.text}`;
+    case 'data':
+      return [b.label, ...b.lines].filter(Boolean).join('\n');
+  }
 }

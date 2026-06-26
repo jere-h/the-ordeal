@@ -1,4 +1,5 @@
-import type { Deltas, Passage, Scene } from './scenes/types';
+import type { Block, Beat, Deltas, Passage, Scene } from './scenes/types';
+import { blockText } from './scenes/types';
 
 /**
  * Thin, format-agnostic driver over a Scene graph. The rest of the app only ever
@@ -27,8 +28,19 @@ export class StoryEngine {
     return p;
   }
 
+  /** The structured content of the current passage, for the renderer. */
+  currentBlocks(): Block[] {
+    return this.passage().blocks;
+  }
+
+  /** Where the current passage sits in the arc (for the progress indicator); undefined on the result. */
+  currentBeat(): Beat | undefined {
+    return this.passage().beat;
+  }
+
+  /** Plain-text flattening of the current passage — accessibility/text fallback and tests. */
   currentText(): string {
-    return this.passage().text;
+    return this.passage().blocks.map(blockText).join('\n\n');
   }
 
   currentChoices(): { label: string }[] {
