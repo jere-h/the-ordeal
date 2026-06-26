@@ -3,8 +3,6 @@ import { JournalStore } from './journal';
 import { PullMeter } from './pull';
 import type { StoryEngine } from './story';
 
-const MAX_AXIS = 3;
-
 /** Final screen: two scores + trade-off readout, reflection capture, and the
  *  Ordeal-#2 pull CTA. Renders only what the engine has accumulated; no network. */
 export class ResultScreen {
@@ -16,6 +14,7 @@ export class ResultScreen {
   show(): void {
     this.pull.recordPlay();
     const { survivability, self_advocacy } = this.engine.scores();
+    const max = this.engine.maxScores();
 
     this.root.innerHTML = '';
     const card = el('section', 'card result');
@@ -23,10 +22,10 @@ export class ResultScreen {
 
     const scores = el('div', 'scores');
     scores.appendChild(
-      this.axis('Survivability', survivability, 'Kept you employed, trusted, and out of the crossfire.'),
+      this.axis('Survivability', survivability, max.survivability, 'Kept you employed, trusted, and out of the crossfire.'),
     );
     scores.appendChild(
-      this.axis('Self-Advocacy', self_advocacy, 'Protected your credit, your boundaries, and your judgment.'),
+      this.axis('Self-Advocacy', self_advocacy, max.self_advocacy, 'Protected your credit, your boundaries, and your judgment.'),
     );
     card.appendChild(scores);
 
@@ -68,16 +67,17 @@ export class ResultScreen {
     this.root.appendChild(card);
   }
 
-  private axis(name: string, value: number, blurb: string): HTMLElement {
+  private axis(name: string, value: number, max: number, blurb: string): HTMLElement {
+    const denom = Math.max(1, max); // never divide a bar into zero segments
     const wrap = el('div', 'axis');
     const head = el('div', 'axis-head');
     head.appendChild(el('span', 'axis-name', name));
-    head.appendChild(el('span', 'axis-value', `${value} / ${MAX_AXIS}`));
+    head.appendChild(el('span', 'axis-value', `${value} / ${denom}`));
     wrap.appendChild(head);
 
     const bar = el('div', 'bar');
-    const filled = Math.max(0, Math.min(value, MAX_AXIS)); // guard future multi-step scenes
-    for (let i = 0; i < MAX_AXIS; i++) {
+    const filled = Math.max(0, Math.min(value, denom)); // clamp to the axis ceiling
+    for (let i = 0; i < denom; i++) {
       bar.appendChild(el('span', i < filled ? 'seg filled' : 'seg'));
     }
     wrap.appendChild(bar);

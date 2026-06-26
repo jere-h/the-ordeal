@@ -1,64 +1,110 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ordeal1 } from './scenes/ordeal1';
+import type { Scene } from './scenes/types';
 import { StoryEngine } from './story';
 import { JournalStore } from './journal';
 import { PullMeter } from './pull';
 
-// The four first-choice indices and the exact score pair each should yield.
-const EXPECTED = [
-  { choice: 'fight back', survivability: 0, self_advocacy: 3 },
-  { choice: 'absorb', survivability: 3, self_advocacy: 0 },
-  { choice: 'escalate', survivability: 2, self_advocacy: 2 },
-  { choice: 'document', survivability: 2, self_advocacy: 1 },
-];
+/**
+ * Enumerate every root→terminal path as a sequence of choice indices, by walking
+ * the scene graph. Generalizes the old hard-coded "4 first choices" to the
+ * two-decision arc (and any future depth): each terminal path is a full
+ * setup→…→result run.
+ */
+function enumeratePaths(scene: Scene): number[][] {
+  const byId = new Map(scene.passages.map((p) => [p.id, p]));
+  const out: number[][] = [];
+  const walk = (id: string, acc: number[]): void => {
+    const choices = byId.get(id)?.choices ?? [];
+    if (choices.length === 0) {
+      out.push(acc);
+      return;
+    }
+    choices.forEach((c, i) => walk(c.to, [...acc, i]));
+  };
+  walk(scene.start, []);
+  return out;
+}
 
-/** Play a single branch: pick the first choice `i`, then the lone continue. */
-function playBranch(i: number) {
+/** Drive a fresh engine along a path of choice indices and return the final state. */
+function play(indices: number[]) {
   const engine = new StoryEngine(ordeal1);
-  engine.choose(i);
-  // Each fallout has exactly one (zero-delta) continue to the result.
-  expect(engine.currentChoices()).toHaveLength(1);
-  engine.choose(0);
+  for (const i of indices) engine.choose(i);
   return engine;
 }
 
+// The full set of root→terminal path totals (regression guard against accidental
+// delta edits). Mirrors the per-path table in ordeal1.ts.
+const EXPECTED_TOTALS = [
+  { survivability: 0, self_advocacy: 6 }, // FIGHT → hold   (Self-Advocacy leader)
+  { survivability: 3, self_advocacy: 3 }, // FIGHT → fold
+  { survivability: 6, self_advocacy: 0 }, // ABSORB → eat   (Survivability leader)
+  { survivability: 4, self_advocacy: 3 }, // ABSORB → reclaim
+  { survivability: 5, self_advocacy: 2 }, // ESCALATE → defer
+  { survivability: 3, self_advocacy: 4 }, // ESCALATE → record
+  { survivability: 5, self_advocacy: 1 }, // DOCUMENT → defer
+  { survivability: 3, self_advocacy: 3 }, // DOCUMENT → record
+];
+
+const sortPairs = (pairs: { survivability: number; self_advocacy: number }[]) =>
+  [...pairs].sort((a, b) => a.survivability - b.survivability || a.self_advocacy - b.self_advocacy);
+
 describe('Ordeal #1 scene', () => {
-  it('every branch reaches the single terminal result passage', () => {
-    EXPECTED.forEach((_, i) => {
-      const engine = playBranch(i);
+  const paths = enumeratePaths(ordeal1);
+
+  it('has the expected branch shape (two decisions + a continue, eight terminal paths)', () => {
+    expect(paths).toHaveLength(8);
+    // Each path is [first choice, second choice, continue-to-result].
+    paths.forEach((p) => expect(p).toHaveLength(3));
+  });
+
+  it('every root→terminal path reaches the single shared result passage', () => {
+    const resultText = ordeal1.passages.find((p) => p.id === 'result')!.text;
+    paths.forEach((indices) => {
+      const engine = play(indices);
       expect(engine.isEnded()).toBe(true);
-      expect(engine.currentText()).toBe(ordeal1.passages.find((p) => p.id === 'result')!.text);
+      expect(engine.currentText()).toBe(resultText);
     });
   });
 
-  it('each choice yields its exact expected score pair (regression guard)', () => {
-    EXPECTED.forEach((exp, i) => {
-      const { survivability, self_advocacy } = playBranch(i).scores();
-      expect({ survivability, self_advocacy }).toEqual({
-        survivability: exp.survivability,
-        self_advocacy: exp.self_advocacy,
-      });
-    });
+  it('produces exactly the expected set of path score totals (regression guard)', () => {
+    const totals = paths.map((indices) => play(indices).scores());
+    expect(sortPairs(totals)).toEqual(sortPairs(EXPECTED_TOTALS));
   });
 
-  it('is calibrated: no choice maxes both axes, and the axis leaders differ', () => {
-    const pairs = EXPECTED.map((_, i) => playBranch(i).scores());
-    const maxSurv = Math.max(...pairs.map((p) => p.survivability));
-    const maxSelf = Math.max(...pairs.map((p) => p.self_advocacy));
+  it('is calibrated: no path maxes both axes, and the axis leaders are different, unique paths', () => {
+    const totals = paths.map((indices) => play(indices).scores());
+    const maxSurv = Math.max(...totals.map((t) => t.survivability));
+    const maxSelf = Math.max(...totals.map((t) => t.self_advocacy));
 
-    // (a) No single choice is maximal on BOTH axes.
-    expect(pairs.some((p) => p.survivability === maxSurv && p.self_advocacy === maxSelf)).toBe(false);
+    // (a) No single path is maximal on BOTH axes.
+    expect(totals.some((t) => t.survivability === maxSurv && t.self_advocacy === maxSelf)).toBe(false);
 
-    // (b) The survivability leader and self-advocacy leader are different, unique choices.
-    const survLeaders = pairs.flatMap((p, i) => (p.survivability === maxSurv ? [i] : []));
-    const selfLeaders = pairs.flatMap((p, i) => (p.self_advocacy === maxSelf ? [i] : []));
+    // (b) The survivability leader and self-advocacy leader are different, unique paths.
+    const survLeaders = totals.flatMap((t, i) => (t.survivability === maxSurv ? [i] : []));
+    const selfLeaders = totals.flatMap((t, i) => (t.self_advocacy === maxSelf ? [i] : []));
     expect(survLeaders).toHaveLength(1);
     expect(selfLeaders).toHaveLength(1);
     expect(survLeaders[0]).not.toBe(selfLeaders[0]);
   });
 
+  it('reports per-axis ceilings matching the leader paths (result-screen denominator)', () => {
+    const max = new StoryEngine(ordeal1).maxScores();
+    expect(max).toEqual({ survivability: 6, self_advocacy: 6 });
+  });
+
   it('setup offers exactly four labeled choices', () => {
     expect(new StoryEngine(ordeal1).currentChoices()).toHaveLength(4);
+  });
+
+  it('each first choice leads to a second decision before any fallout', () => {
+    for (let i = 0; i < 4; i++) {
+      const engine = new StoryEngine(ordeal1);
+      engine.choose(i);
+      // The escalation beat is itself a decision (two choices), not a lone continue.
+      expect(engine.currentChoices()).toHaveLength(2);
+      expect(engine.isEnded()).toBe(false);
+    }
   });
 });
 
@@ -98,9 +144,10 @@ describe('no-network invariant', () => {
       throw new Error('network call attempted');
     }) as never);
 
-    // Drive a complete branch and exercise both client stores.
+    // Drive a complete two-decision branch (ESCALATE → defer → continue).
     const engine = new StoryEngine(ordeal1);
     engine.choose(2);
+    engine.choose(0);
     engine.choose(0);
     expect(engine.isEnded()).toBe(true);
     new JournalStore('reflection').flush('note');
