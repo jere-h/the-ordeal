@@ -37,6 +37,7 @@ export const ordeal1: Scene = {
   passages: [
     {
       id: 'setup',
+      art: 'data-reveal',
       beat: { n: 1, of: 3, label: 'The mistake' },
       blocks: [
         { kind: 'narration', text: "5:58pm Friday, six weeks in. You re-run the revenue dashboard. Same number. Then you see why." },
@@ -85,6 +86,7 @@ export const ordeal1: Scene = {
     //    manager could control the timing — and the rebuke routes THROUGH them. ──
     {
       id: 'esc_fight',
+      art: 'call',
       beat: { n: 2, of: 3, label: 'The escalation' },
       blocks: [
         { kind: 'message', from: 'You', via: 'slack', time: 'Fri 7:02pm', text: 'Heads up — revenue on the dashboard is overstated ~12%. Refund de-dup bug. Correcting now.', self: true },
@@ -110,6 +112,7 @@ export const ordeal1: Scene = {
     // ── Escalation beat after ABSORB: someone is happy to let you carry all of it. ──
     {
       id: 'esc_absorb',
+      art: 'room',
       beat: { n: 2, of: 3, label: 'The escalation' },
       blocks: [
         { kind: 'narration', text: 'Monday standup. You open your mouth to say "my mistake" —' },
@@ -135,6 +138,7 @@ export const ordeal1: Scene = {
     // ── Escalation beat after ESCALATE/DOCUMENT: the proper channel has its own politics. ──
     {
       id: 'esc_channel',
+      art: 'pressure',
       beat: { n: 2, of: 3, label: 'The escalation' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'call', time: 'Sun', text: "Good catch, really. A wrong number to the board rolls up to me, so let me frame how it lands Monday. Cleaner from me." },
@@ -160,6 +164,7 @@ export const ordeal1: Scene = {
     // ── Fallouts ──
     {
       id: 'fallout_fight_hold',
+      art: 'spotlight',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: "Board got the correction Monday, traceable to you. CFO wasn't mad about the number — about reading it cold in the open channel before anyone could frame it." },
@@ -169,6 +174,7 @@ export const ordeal1: Scene = {
     },
     {
       id: 'fallout_fight_fold',
+      art: 'sunset',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'narration', text: 'You apologize for the timing; your manager exhales. Monday the chief of staff restates it, clean and senior, and the catch reads as the org\'s. Nobody is mad anymore.' },
@@ -178,6 +184,7 @@ export const ordeal1: Scene = {
     },
     {
       id: 'fallout_absorb_eat',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'narration', text: 'You let it stand. The senior analyst gives you a small grateful nod; the CFO hears it was a handled new-hire slip and moves on. No enemies, nobody mad.' },
@@ -187,6 +194,7 @@ export const ordeal1: Scene = {
     },
     {
       id: 'fallout_absorb_reclaim',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'You', via: 'dm', text: 'Quick note on the dashboard: the dup-prone rows came from the upstream pipeline; the missing de-dup was mine. Wanted both halves on record.', self: true },
@@ -196,6 +204,7 @@ export const ordeal1: Scene = {
     },
     {
       id: 'fallout_channel_defer',
+      art: 'sunset',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: 'Handled. Framed it as "a refinement we caught." No team named, no drama. You\'re covered.' },
@@ -205,6 +214,7 @@ export const ordeal1: Scene = {
     },
     {
       id: 'fallout_channel_record',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: 'Fine — one line of credit to you. Team stays unnamed though.' },

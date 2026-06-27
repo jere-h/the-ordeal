@@ -62,6 +62,12 @@ export class ResultScreen {
     this.root.innerHTML = '';
     const card = el('section', 'card result');
 
+    // A settling "aftermath" band bookends the arc (same regardless of stance — it
+    // must not read as a grade). Decorative, drawn in CSS.
+    const band = el('div', 'scene-art scene-art--aftermath');
+    band.setAttribute('aria-hidden', 'true');
+    card.appendChild(band);
+
     // 1. The outcome prose is the payoff — give it the top of the card and room.
     const outcome = el('div', 'outcome');
     renderBlocks(outcome, this.engine.currentBlocks());

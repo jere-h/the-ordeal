@@ -19,6 +19,12 @@ export class MenuScreen {
     this.root.innerHTML = '';
     const card = el('section', 'card menu');
 
+    // One quiet masthead band sets the tone (not per-item, which would read as a
+    // gamified level-select). Decorative, drawn in CSS.
+    const band = el('div', 'scene-art scene-art--data-reveal');
+    band.setAttribute('aria-hidden', 'true');
+    card.appendChild(band);
+
     card.appendChild(el('h1', 'menu-title', 'The Ordeal'));
     card.appendChild(
       el(

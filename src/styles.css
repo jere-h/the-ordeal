@@ -729,11 +729,228 @@ body {
   cursor: pointer;
 }
 
+/* ============================================================
+   Per-passage CSS-art hero band (.scene-art)
+
+   One empty, aria-hidden <div> per passage, painted entirely in CSS — no images,
+   no inline SVG. Each motif is an ABSTRACT, in-theme band (not a literal
+   illustration), full-bleed to the card's rounded top, sitting above the beat
+   indicator. Layers: element background (the field) + ::before (z2, the one
+   "hero" mark) + ::after (z3, shared vignette/sheen). Tokens only.
+   ============================================================ */
+.scene-art {
+  position: relative;
+  /* full-bleed to the card edges, clipped to the card's rounded top corners */
+  margin: calc(-1 * clamp(1.1rem, 4vw, 1.6rem)) calc(-1 * clamp(1.1rem, 4vw, 1.6rem)) 1.2rem;
+  height: clamp(56px, 15vw, 76px); /* hero band; capped so it never pushes the choices below the fold */
+  border-radius: 14px 14px 0 0;
+  background: #16181d;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Shared lighting: a faint top sheen + a settling bottom vignette, so every
+   motif sits in the same lit box and no gradient reaches a flat edge. */
+.scene-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% -20%, rgba(232, 230, 225, 0.05), transparent 60%),
+    radial-gradient(140% 120% at 50% 120%, rgba(0, 0, 0, 0.45), transparent 60%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+/* data-reveal — a luminous grid with a gold trend resolving out of the data. */
+.scene-art--data-reveal {
+  background:
+    linear-gradient(115deg, transparent 38%, rgba(217, 164, 65, 0.14) 50%, transparent 62%),
+    radial-gradient(60% 120% at 80% 115%, rgba(217, 164, 65, 0.2), transparent 60%),
+    linear-gradient(rgba(42, 46, 55, 0.55) 1px, transparent 1px) 0 0 / 100% 22px,
+    linear-gradient(90deg, rgba(42, 46, 55, 0.55) 1px, transparent 1px) 0 0 / 26px 100%,
+    #16181d;
+}
+.scene-art--data-reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(0deg, rgba(217, 164, 65, 0), rgba(217, 164, 65, 0.55) 70%, var(--accent));
+  clip-path: polygon(0 100%, 10% 86%, 22% 88%, 34% 70%, 46% 74%, 58% 52%, 70% 58%, 82% 34%, 100% 40%, 100% 100%);
+  opacity: 0.85;
+}
+
+/* silence — a near-dead usage field: sparse faint bars, one lonely gold tick. */
+.scene-art--silence {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 30px, rgba(154, 160, 170, 0.1) 30px 32px),
+    linear-gradient(rgba(154, 160, 170, 0.05), rgba(154, 160, 170, 0.05)),
+    #16181d;
+}
+.scene-art--silence::before {
+  content: '';
+  position: absolute;
+  left: 64%;
+  bottom: 16%;
+  width: 3px;
+  height: 42%;
+  z-index: 2;
+  border-radius: 2px;
+  background: linear-gradient(var(--accent), rgba(217, 164, 65, 0.2));
+  box-shadow: 0 0 12px 1px rgba(217, 164, 65, 0.5);
+}
+
+/* thread — overlapping chat-bubble silhouettes (the channel hues) drifting up. */
+.scene-art--thread {
+  background:
+    radial-gradient(18px 14px at 22% 70%, rgba(122, 167, 224, 0.22) 60%, transparent 62%),
+    radial-gradient(22px 16px at 44% 56%, rgba(201, 139, 208, 0.2) 60%, transparent 62%),
+    radial-gradient(16px 12px at 60% 74%, rgba(95, 179, 122, 0.2) 60%, transparent 62%),
+    radial-gradient(26px 18px at 74% 42%, rgba(122, 167, 224, 0.16) 60%, transparent 62%),
+    radial-gradient(14px 11px at 86% 60%, rgba(201, 139, 208, 0.16) 60%, transparent 62%),
+    #16181d;
+}
+
+/* call — concentric rings radiating from a lit point; an incoming call. */
+.scene-art--call {
+  background:
+    radial-gradient(circle at 50% 58%,
+      transparent 0 10px, rgba(95, 179, 122, 0.42) 11px, transparent 13px 26px,
+      rgba(95, 179, 122, 0.28) 27px, transparent 29px 44px,
+      rgba(95, 179, 122, 0.16) 45px, transparent 47px),
+    radial-gradient(circle at 50% 58%, rgba(95, 179, 122, 0.16), transparent 36%),
+    #16181d;
+}
+.scene-art--call::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border-radius: 50%;
+  background: var(--call);
+  box-shadow: 0 0 10px 1px rgba(95, 179, 122, 0.7);
+}
+
+/* room — a spotlit round table seen from above, ringed with seats; a standup. */
+.scene-art--room {
+  background:
+    radial-gradient(ellipse 70px 30px at 50% 50%, transparent 60%, rgba(217, 164, 65, 0.28) 62%, transparent 70%),
+    radial-gradient(ellipse 120px 70px at 50% 40%, rgba(232, 230, 225, 0.1), transparent 70%),
+    radial-gradient(ellipse 90px 50px at 50% 132%, rgba(0, 0, 0, 0.5), transparent 70%),
+    #16181d;
+}
+.scene-art--room::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(6px 6px at 50% 24%, rgba(154, 160, 170, 0.5), transparent 70%),
+    radial-gradient(6px 6px at 72% 38%, rgba(154, 160, 170, 0.45), transparent 70%),
+    radial-gradient(6px 6px at 72% 64%, rgba(154, 160, 170, 0.45), transparent 70%),
+    radial-gradient(6px 6px at 50% 78%, rgba(154, 160, 170, 0.5), transparent 70%),
+    radial-gradient(6px 6px at 28% 64%, rgba(154, 160, 170, 0.45), transparent 70%),
+    radial-gradient(6px 6px at 28% 38%, rgba(154, 160, 170, 0.45), transparent 70%);
+}
+
+/* pressure — converging diagonals tightening into a vignette; mounting stakes. */
+.scene-art--pressure {
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 16deg, rgba(217, 164, 65, 0.1) 16deg 17deg, transparent 17deg 30deg),
+    radial-gradient(60% 60% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.55) 100%),
+    #16181d;
+}
+.scene-art--pressure::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(40% 40% at 50% 50%, rgba(217, 164, 65, 0.16), transparent 70%);
+}
+
+/* spotlight — a single hard beam from a point at the top; being seen. */
+.scene-art--spotlight {
+  background:
+    conic-gradient(from 200deg at 50% -10%, transparent 0deg, rgba(217, 164, 65, 0.22) 25deg, rgba(217, 164, 65, 0.06) 32deg, transparent 40deg),
+    radial-gradient(40px 24px at 50% 96%, rgba(217, 164, 65, 0.3), transparent 70%),
+    #16181d;
+}
+.scene-art--spotlight::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px 2px rgba(217, 164, 65, 0.6);
+}
+
+/* aftermath — a low, settled horizon with a faint residual glow; storm passed. */
+.scene-art--aftermath {
+  background:
+    radial-gradient(80% 50% at 50% 100%, rgba(217, 164, 65, 0.18), transparent 70%),
+    linear-gradient(180deg, #181b21 0%, #15171c 62%, #101216 63%, #0e1014 100%);
+}
+.scene-art--aftermath::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 62%;
+  height: 1px;
+  z-index: 2;
+  background: linear-gradient(90deg, transparent, rgba(217, 164, 65, 0.5), transparent);
+}
+
+/* sunset — light fading toward the dark edge; the work going quietly dark. */
+.scene-art--sunset {
+  background:
+    linear-gradient(90deg, rgba(217, 164, 65, 0.16), rgba(217, 164, 65, 0.04) 40%, transparent 70%),
+    linear-gradient(180deg, #1a1c20, #141619 70%, #0e1014);
+}
+.scene-art--sunset::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 58%;
+  height: 1px;
+  z-index: 2;
+  background: linear-gradient(90deg, rgba(217, 164, 65, 0.45), rgba(217, 164, 65, 0.12) 45%, transparent 75%);
+}
+
+/* Ambient motion — opacity/transform only, slow, never distracting. */
+@keyframes scene-art-breathe { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
+@keyframes scene-art-drift { from { transform: translateY(3px); } to { transform: translateY(-3px); } }
+
+.scene-art--data-reveal::before { animation: scene-art-breathe 5.5s ease-in-out infinite; }
+.scene-art--silence::before { animation: scene-art-breathe 4s ease-in-out infinite; }
+.scene-art--call::before { animation: scene-art-breathe 1.8s ease-in-out infinite; }
+.scene-art--spotlight { animation: scene-art-breathe 6s ease-in-out infinite; }
+.scene-art--thread { animation: scene-art-drift 6s ease-in-out infinite alternate; }
+
 /* Respect a reduced-motion preference: no hover/commit transitions or shifts.
    (The renderer also skips the commit-beat pause when this is set.) */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+    animation: none !important;
+  }
+  /* Scoped guard, in case the global selector above is ever narrowed. */
+  .scene-art,
+  .scene-art::before,
+  .scene-art::after {
     animation: none !important;
   }
 }

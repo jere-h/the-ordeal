@@ -40,6 +40,7 @@ export const ordeal2: Scene = {
   passages: [
     {
       id: 'setup',
+      art: 'silence',
       beat: { n: 1, of: 3, label: 'The silence' },
       blocks: [
         { kind: 'narration', text: "Six weeks ago you shipped the retention dashboard. It's clean, it's right. You check the usage panel." },
@@ -90,6 +91,7 @@ export const ordeal2: Scene = {
     //    whole thing — the dashboard wasn't ignored, it answered the wrong cut. ──
     {
       id: 'esc_press',
+      art: 'thread',
       beat: { n: 2, of: 3, label: 'The reply' },
       blocks: [
         { kind: 'message', from: 'You', via: 'slack', time: '2:41pm', text: "Churn-by-cohort is already in the retention dash — link here. Curious why it's slated to sunset before we've leaned on it?", self: true },
@@ -115,6 +117,7 @@ export const ordeal2: Scene = {
     // ── Escalation after ASK: the DM gets you the real story, privately. ──
     {
       id: 'esc_probe',
+      art: 'thread',
       beat: { n: 2, of: 3, label: 'The reply' },
       blocks: [
         { kind: 'message', from: 'You', via: 'dm', time: '2:50pm', text: "saw the sunset note on the retention dash — no drama, just want to learn. what did it miss for you?", self: true },
@@ -141,6 +144,7 @@ export const ordeal2: Scene = {
     //    quiet and they came to you). The pivot arrives as a hedged offer. ──
     {
       id: 'esc_let',
+      art: 'call',
       beat: { n: 2, of: 3, label: 'The reply' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'call', time: 'Thu', text: "The dash thing — don't read too much into it. Usage is one signal; the cut just drifted to plan tier and nobody told you. Happens." },
@@ -166,6 +170,7 @@ export const ordeal2: Scene = {
     // ── Fallouts ──
     {
       id: 'fallout_press_defend',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'PM', via: 'slack', text: "ok — one day. send it by tier and we'll keep it." },
@@ -175,6 +180,7 @@ export const ordeal2: Scene = {
     },
     {
       id: 'fallout_press_pivot',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Senior analyst', via: 'slack', text: "appreciate that. let's pair on the tier version — I'll send you how I cut it by hand." },
@@ -184,6 +190,7 @@ export const ordeal2: Scene = {
     },
     {
       id: 'fallout_probe_defend',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'PM', via: 'dm', text: "done — I edited the doc: 'on hold, re-cut by tier (you).' fair enough?" },
@@ -193,6 +200,7 @@ export const ordeal2: Scene = {
     },
     {
       id: 'fallout_probe_pivot',
+      art: 'sunset',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'narration', text: "You fix the cut over two evenings and reshare it, no fanfare. The PM thanks you; the sunset line quietly goes stale. Calm, clean, no friction with anyone." },
@@ -202,6 +210,7 @@ export const ordeal2: Scene = {
     },
     {
       id: 'fallout_let_reframe',
+      art: 'spotlight',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: "Good — make it yours. I'll say in planning you're picking up the exec report." },
@@ -211,6 +220,7 @@ export const ordeal2: Scene = {
     },
     {
       id: 'fallout_let_quiet',
+      art: 'sunset',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: "Good call not making it a thing. Fresh start on the report." },

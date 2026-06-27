@@ -50,6 +50,7 @@ export const ordeal3: Scene = {
   passages: [
     {
       id: 'setup',
+      art: 'thread',
       beat: { n: 1, of: 3, label: 'The ask' },
       blocks: [
         { kind: 'narration', text: "Tuesday, mid-morning. You like working with Priya. She actually reads your charts, she fights for the team, and last month she talked you up to her director by name. Her DM lights up and you're already a little glad to see it." },
@@ -101,6 +102,7 @@ export const ordeal3: Scene = {
     //    the case better than you expected — which is exactly what makes it hard. ──
     {
       id: 'esc_push',
+      art: 'pressure',
       beat: { n: 2, of: 3, label: 'The push' },
       blocks: [
         { kind: 'message', from: 'You', via: 'dm', time: '10:51am', text: "I can't put 71% as the flow's activation rate — that's with SMB excluded. The all-segments number is 52%. Happy to send that one with the segment split so the lift is still clear.", self: true },
@@ -127,6 +129,7 @@ export const ordeal3: Scene = {
     //    she has to decide whether to use it — in front of you. ──
     {
       id: 'esc_question',
+      art: 'data-reveal',
       beat: { n: 2, of: 3, label: 'The reply' },
       blocks: [
         { kind: 'message', from: 'You', via: 'dm', time: '10:49am', text: "Pulled it — flow's at 52% all-in (+1pt), but that hides the real story: mid-market+ent jumped to 71%, SMB dropped to 38%. The flow worked for who it was for and stalled SMB. That split is the actual insight imo.", self: true },
@@ -153,6 +156,7 @@ export const ordeal3: Scene = {
     //    that gratitude is the thing your caveat now has to interrupt, or not. ──
     {
       id: 'esc_grateful',
+      art: 'spotlight',
       beat: { n: 2, of: 3, label: 'The thanks' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', time: '11:08am', text: "you're a lifesaver, seriously. dropping it into the hero slide now. you make this so much easier than the last analyst who'd turn every pull into a debate 🙏" },
@@ -178,6 +182,7 @@ export const ordeal3: Scene = {
     // ── Fallouts ──
     {
       id: 'fallout_hold_firm',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'narration', text: "She relabels it, a little cool about it — for an afternoon you're not sure you didn't just spend something with the one PM who had your back." },
@@ -188,6 +193,7 @@ export const ordeal3: Scene = {
     },
     {
       id: 'fallout_hold_bend',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: 'deal — 71% headline, 52% right under it same size. that I can defend. thank you for not just rolling over but also not making me bleed for it.' },
@@ -197,6 +203,7 @@ export const ordeal3: Scene = {
     },
     {
       id: 'fallout_honest_stand',
+      art: 'spotlight',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'narration', text: "Thursday she points at you in the room, the good way; the director nods at the SMB slide longer than at the win slide. The harder truth turned out to be the more interesting one." },
@@ -206,6 +213,7 @@ export const ordeal3: Scene = {
     },
     {
       id: 'fallout_honest_soften',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "thank you — honestly relieved you flagged the SMB thing privately and not in front of everyone. I'll use the split, framed gently. you saved me a bad surprise." },
@@ -217,6 +225,7 @@ export const ordeal3: Scene = {
     // for either stance — it never names which one you took.
     {
       id: 'fallout_grateful_onrec',
+      art: 'aftermath',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "noted in the deck notes, appendix has the 52%. you're covered and so am I. appreciate you flagging it instead of just letting me run." },
@@ -227,6 +236,7 @@ export const ordeal3: Scene = {
     // Shared by CAVEAT→verbal (5,1) and GIVE→verbal (6,0) [Survivability leader].
     {
       id: 'fallout_grateful_verbal',
+      art: 'sunset',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "you're the best. dropping it in now. seriously, so easy to work with — telling my director that too 🙌" },

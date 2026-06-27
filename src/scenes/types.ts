@@ -54,6 +54,10 @@ export interface Passage {
   blocks: Block[];
   /** Drives the progress indicator; omitted on the terminal result passage. */
   beat?: Beat;
+  /** Optional CSS-art motif key for the per-passage hero band (see styles.css
+   *  `.scene-art--{key}`): 'data-reveal' | 'silence' | 'thread' | 'call' |
+   *  'room' | 'pressure' | 'aftermath' | 'spotlight' | 'sunset'. Decorative. */
+  art?: string;
   /** A terminal passage omits `choices` — that is how the engine detects the end. */
   choices?: Choice[];
 }
