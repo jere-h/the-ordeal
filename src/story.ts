@@ -54,6 +54,11 @@ export class StoryEngine {
     return this._moments;
   }
 
+  /** The current passage's optional CSS-art motif key (for the hero band). */
+  currentArt(): string | undefined {
+    return this.passage().art;
+  }
+
   choose(index: number): void {
     const choices = this.passage().choices ?? [];
     const choice = choices[index];

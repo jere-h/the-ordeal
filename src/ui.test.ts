@@ -38,6 +38,16 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelectorAll('.choice-detail').length).toBeGreaterThan(0);
   });
 
+  it('renders a decorative, aria-hidden CSS-art band for the passage motif', () => {
+    render(new StoryEngine(ordeal1), ctx()).render();
+    const band = root.querySelector('.scene-art');
+    expect(band).not.toBeNull();
+    expect(band?.classList.contains('scene-art--data-reveal')).toBe(true); // ordeal1 setup motif
+    expect(band?.getAttribute('aria-hidden')).toBe('true');
+    // the band is the card's first child — the masthead above the beat indicator
+    expect(root.querySelector('.card')?.firstElementChild).toBe(band);
+  });
+
   it('renders the setup beat with a data chip and four choice buttons', () => {
     render(new StoryEngine(ordeal1), ctx()).render();
 
