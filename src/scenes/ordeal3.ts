@@ -70,22 +70,27 @@ export const ordeal3: Scene = {
       ],
       choices: [
         {
-          label: 'Tell her straight: "I can\'t send 71% as the flow\'s number — that\'s SMB-excluded. Here\'s the honest cut."',
+          label: 'Tell her straight',
+          detail: '"I can\'t send 71% as the flow\'s number — here\'s the honest cut"',
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'esc_push',
         },
         {
-          label: "Don't wait to be asked the wrong question — reply with the all-segments 52% and a one-line read of why SMB matters.",
+          label: 'Send the number she didn\'t ask for',
+          detail: 'reply with the all-segments 52% and why SMB matters',
           deltas: { survivability: 1, self_advocacy: 2 },
           to: 'esc_question',
         },
         {
-          label: 'Pull her 71% cut, but caveat it hard in writing: "mid-market+ent only; all-in is 52%."',
+          label: 'Pull it, but caveat it hard',
+          detail: 'in writing: "mid-market+ent only; all-in is 52%"',
           deltas: { survivability: 2, self_advocacy: 1 },
           to: 'esc_grateful',
         },
+        // hidden-trap: reads principled, costs credit
         {
-          label: "Pull exactly what she asked. She knows her deck; it's her call, not yours.",
+          label: 'Respect that it\'s her call',
+          detail: 'she owns the deck and the segments; pull what she asked',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'esc_grateful',
         },
@@ -104,12 +109,14 @@ export const ordeal3: Scene = {
       ],
       choices: [
         {
-          label: 'Hold it warmly but cleanly: "then let\'s headline 71% for the segment, labeled as that — not as the flow\'s rate."',
+          label: 'Hold it, warmly but cleanly',
+          detail: '"headline 71% for the segment, labeled as that — not the flow\'s rate"',
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'fallout_hold_firm',
         },
         {
-          label: 'Meet her halfway: lead with 71% if the 52% sits right under it, same slide, same size.',
+          label: 'Meet her halfway',
+          detail: 'lead with 71% if 52% sits right under it, same size',
           deltas: { survivability: 3, self_advocacy: 1 },
           to: 'fallout_hold_bend',
         },
@@ -128,12 +135,14 @@ export const ordeal3: Scene = {
       ],
       choices: [
         {
-          label: 'Stand behind it: "yes — and I\'ll draft the SMB-drop read so you\'re not caught flat."',
+          label: 'Stand behind it',
+          detail: '"yes — and I\'ll draft the SMB-drop read so you\'re not caught flat"',
           deltas: { survivability: 1, self_advocacy: 3 },
           to: 'fallout_honest_stand',
         },
         {
-          label: 'Soften: "it\'s your deck — use the split however lands best, I just didn\'t want you blindsided."',
+          label: 'Hand her the wheel',
+          detail: '"your deck — use the split however lands, I just didn\'t want you blindsided"',
           deltas: { survivability: 3, self_advocacy: 1 },
           to: 'fallout_honest_soften',
         },
@@ -152,12 +161,14 @@ export const ordeal3: Scene = {
       ],
       choices: [
         {
-          label: 'Put the caveat on record: "glad to help — dropping a note that this is mid-market+ent; all-in is 52% so it\'s there if asked."',
+          label: 'Put the caveat on record',
+          detail: '"glad to help — noting this is mid-market+ent; all-in is 52% if asked"',
           deltas: { survivability: 2, self_advocacy: 2 },
           to: 'fallout_grateful_onrec',
         },
         {
-          label: 'Caveat it once, lightly, then let it go: "np — just so you know it\'s the segment cut, not all-in." 👍',
+          label: 'Flag it once, lightly, let it go',
+          detail: '"np — just so you know it\'s the segment cut, not all-in" 👍',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'fallout_grateful_verbal',
         },
@@ -169,10 +180,9 @@ export const ordeal3: Scene = {
       id: 'fallout_hold_firm',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "ok. labeled as the segment number. it's a weaker headline but I can't argue it's not the honest one. give me a sec to redo the slide." },
-        { kind: 'narration', text: "A pause on the thread, longer than her usual. For an afternoon you're not sure if you just spent something with the one PM who had your back." },
+        { kind: 'narration', text: "She relabels it, a little cool about it — for an afternoon you're not sure you didn't just spend something with the one PM who had your back." },
         { kind: 'message', from: 'Priya (PM)', via: 'dm', time: 'Thu, 4:51pm', text: "director asked the SMB question in QBR. I had the real answer because of you. she said 'good, someone's actually watching the number.' that was about you. coffee's on me, I mean it." },
-        { kind: 'narration', text: "It cost you a cool afternoon to find out: the first time you held a number and it landed, it didn't make you difficult. It made you the one they believe. You read her message twice." },
+        { kind: 'narration', text: "The first time you held a number and it landed, it didn't make you difficult. It made you the one they believe. You read her message twice." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -181,8 +191,7 @@ export const ordeal3: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: 'deal — 71% headline, 52% right under it same size. that I can defend. thank you for not just rolling over but also not making me bleed for it.' },
-        { kind: 'narration', text: "Both numbers ship, same slide, neither hiding. Nobody's mad, and the truth is on the page if anyone reads to the second line." },
-        { kind: 'narration', text: "It's a good outcome and you know it. You also know the eye goes to the big number first, and the big number is still hers. You held most of the line. Most." },
+        { kind: 'narration', text: "Both numbers ship, neither hiding, nobody mad — a good outcome and you know it. You also know the eye goes to the big number first, and the big number is still hers. You held most of the line. Most." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -190,9 +199,8 @@ export const ordeal3: Scene = {
       id: 'fallout_honest_stand',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "sending the split with your SMB read attached. if my director pushes I'm pointing at you in the room — hope that's ok, in the good way." },
-        { kind: 'narration', text: "Thursday she does point at you, in the good way. The director nods at the SMB slide longer than at the win slide. The harder truth turned out to be the more interesting one." },
-        { kind: 'narration', text: "Walking out, another PM you don't know clocks that the analyst stood behind a number that wasn't flattering. You gained a little weight in the room. It came with eyes on you now, which is not the same as comfortable." },
+        { kind: 'narration', text: "Thursday she points at you in the room, the good way; the director nods at the SMB slide longer than at the win slide. The harder truth turned out to be the more interesting one." },
+        { kind: 'narration', text: "Walking out, a PM you don't know clocks that the analyst stood behind a number that wasn't flattering. You gained a little weight in the room — and a little weight of eyes on you, which is not the same as comfortable." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -201,8 +209,7 @@ export const ordeal3: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "thank you — honestly relieved you flagged the SMB thing privately and not in front of everyone. I'll use the split, framed gently. you saved me a bad surprise." },
-        { kind: 'narration', text: "You gave her the true number and the grace to frame it. She takes both. The slide is honest enough; nobody's blindsided; she's warm to you for weeks." },
-        { kind: 'narration', text: "You did the right thing and let her hold the wheel. The insight ships with her name steering it — which is fine, which is generous, which you'll quietly remember was yours first." },
+        { kind: 'narration', text: "You gave her the true number and the grace to frame it; she's warm to you for weeks. The insight ships with her name steering it — which is fine, which is generous, which you'll quietly remember was yours first." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -213,8 +220,7 @@ export const ordeal3: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "noted in the deck notes, appendix has the 52%. you're covered and so am I. appreciate you flagging it instead of just letting me run." },
-        { kind: 'narration', text: "The convenient number leads the slide; your caveat rides in the notes where it's true but quiet. If anyone asks, it's there. You made sure it's there." },
-        { kind: 'narration', text: "QBR comes and goes and nobody opens the appendix. The headline did its job. You stayed easy to work with and you left a fingerprint on the record — small, real, mostly for you. You'd know where to point if it ever mattered." },
+        { kind: 'narration', text: "The convenient number leads the slide; QBR comes and goes and nobody opens the appendix where your caveat sits, true and quiet. You stayed easy to work with and left a fingerprint on the record — small, real, mostly for you. You'd know where to point if it ever mattered." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -224,8 +230,7 @@ export const ordeal3: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Priya (PM)', via: 'dm', text: "you're the best. dropping it in now. seriously, so easy to work with — telling my director that too 🙌" },
-        { kind: 'narration', text: "The 71% goes up as the flow's number. She's grateful, she's loud about it, and that warmth is real and it's yours. The QBR lands; the hero story is a hit; nobody asks about SMB because the slide gave them no reason to." },
-        { kind: 'narration', text: "You're liked, you're trusted, you're the easy one. Weeks later you're pulling another cut and you catch yourself reaching for the flattering slice first, without being asked. You notice that. You file it. The 52% never came up — only you and the number know it was the truer one." },
+        { kind: 'narration', text: "The 71% goes up as the flow's number; the hero story is a hit, nobody asks about SMB. You're liked, you're trusted, you're the easy one. Weeks later you catch yourself reaching for the flattering slice first on another pull, unasked — you notice that, and file it. The 52% never came up. Only you and the number know it was the truer one." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -233,10 +238,15 @@ export const ordeal3: Scene = {
     {
       id: 'result',
       blocks: [
-        { kind: 'narration', text: 'The number was never the hard part. The hard part was a likable person, a real reason, and a slice of the truth that happened to flatter them.' },
-        { kind: 'narration', text: 'Your first move set your stance on the ask; the second, once she pushed back with everything good about her on the line, revealed you.' },
-        { kind: 'narration', text: "And the thing nobody tells you at the start: holding a line can cost you the room for an afternoon and earn it back deeper. Not every time. But the first time it does, you don't forget it." },
+        { kind: 'narration', text: 'Nobody asked you to lie. They asked you to pick the slice that already pointed the right way — and asked it nicely, with a good reason.' },
+        { kind: 'narration', text: 'The easiest "no" you ever gave still cost you a little warmth from someone who deserved it. That cost is how you know it was a real one.' },
+        { kind: 'narration', text: "Holding a line can buy you respect or buy you an awkward afternoon, sometimes both. The first time it pays, you stop wondering whether it's worth it." },
       ],
     },
+  ],
+  moments: [
+    "The cut she asked for",
+    "'so easy to work with'",
+    'Reaching for the flattering slice',
   ],
 };

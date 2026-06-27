@@ -33,7 +33,11 @@ function renderMessage(b: Extract<Block, { kind: 'message' }>): HTMLElement {
   const head = el('div', 'msg-head');
   head.appendChild(icon(b.via));
   head.appendChild(el('span', 'msg-from', b.from));
-  head.appendChild(el('span', 'msg-via', VIA_LABEL[b.via] ?? b.via));
+  // The colored rail + icon already encode the channel for chat; only spell it
+  // out for call/standup, which read as events rather than another DM.
+  if (b.via === 'call' || b.via === 'standup') {
+    head.appendChild(el('span', 'msg-via', VIA_LABEL[b.via] ?? b.via));
+  }
   if (b.time) head.appendChild(el('span', 'msg-time', b.time));
   wrap.appendChild(head);
   wrap.appendChild(el('p', 'msg-body', b.text));

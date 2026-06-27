@@ -16,18 +16,22 @@ export interface Ordeal {
 
 /** The ordered run. Append future ordeals here; the engine, UI, and the
  *  per-ordeal stores are all driven off this list, so adding #3 is one entry. */
+// Run order is a deliberate arc (playtested): lead with the most universal,
+// shareable hook (the dashboard nobody opened), then the gut-punch, and close on
+// the positive mirror so players finish on a payoff rather than two bleak ones.
+// `id`s stay stable (ordeal1/2/3) so per-ordeal stores and EXPECTED_TOTALS don't move.
 export const ordeals: Ordeal[] = [
-  {
-    id: 'ordeal1',
-    title: 'The wrong number',
-    blurb: 'Friday, 5:58pm. The revenue you shipped to the board is overstated 12%. Whose mistake is it — and whose name lands on it?',
-    scene: ordeal1,
-  },
   {
     id: 'ordeal2',
     title: 'The dashboard nobody used',
     blurb: "You shipped it clean. Three people opened it. Now it's quietly slated to be killed.",
     scene: ordeal2,
+  },
+  {
+    id: 'ordeal1',
+    title: 'The wrong number',
+    blurb: 'Friday, 5:58pm. The revenue you shipped to the board is overstated 12%. Whose mistake is it — and whose name lands on it?',
+    scene: ordeal1,
   },
   {
     id: 'ordeal3',
