@@ -1,4 +1,4 @@
-import { el } from './dom';
+import { el, sceneArt } from './dom';
 import { ordeals } from './scenes';
 
 /** What the landing page needs: a way to start the chosen story. */
@@ -20,10 +20,8 @@ export class MenuScreen {
     const card = el('section', 'card menu');
 
     // One quiet masthead band sets the tone (not per-item, which would read as a
-    // gamified level-select). Decorative, drawn in CSS.
-    const band = el('div', 'scene-art scene-art--data-reveal');
-    band.setAttribute('aria-hidden', 'true');
-    card.appendChild(band);
+    // gamified level-select). Illustrative, drawn in CSS.
+    card.appendChild(sceneArt('data-reveal'));
 
     card.appendChild(el('h1', 'menu-title', 'The Ordeal'));
     card.appendChild(

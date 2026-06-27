@@ -730,215 +730,553 @@ body {
 }
 
 /* ============================================================
-   Per-passage CSS-art hero band (.scene-art)
+   The Ordeal — illustrative hero-band scene art (pure CSS)
+   DOM:  <div class="scene-art scene-art--KEY">
+            <span class="scene-art-a"></span><span class="scene-art-b"></span>
+         </div>
+   7 paint layers per band: div bg, div::before, div::after,
+   span.a (+::before/::after), span.b (+::before/::after).
 
-   One empty, aria-hidden <div> per passage, painted entirely in CSS — no images,
-   no inline SVG. Each motif is an ABSTRACT, in-theme band (not a literal
-   illustration), full-bleed to the card's rounded top, sitting above the beat
-   indicator. Layers: element background (the field) + ::before (z2, the one
-   "hero" mark) + ::after (z3, shared vignette/sheen). Tokens only.
+   FIGURE LANGUAGE (shared):
+   A bust = shoulders (wide rounded trapezoid bleeding off the
+   bottom edge) + head (circle ~0.42x shoulder width above a small
+   neck gap). Figures are charcoal silhouettes (#1a1d22 -> #0e1013)
+   slightly darker than the band, REVEALED by one directional warm
+   light (off-center radial / one-sided inset rim).
    ============================================================ */
-.scene-art {
-  position: relative;
-  /* full-bleed to the card edges, clipped to the card's rounded top corners */
-  margin: calc(-1 * clamp(1.1rem, 4vw, 1.6rem)) calc(-1 * clamp(1.1rem, 4vw, 1.6rem)) 1.2rem;
-  height: clamp(56px, 15vw, 76px); /* hero band; capped so it never pushes the choices below the fold */
-  border-radius: 14px 14px 0 0;
-  background: #16181d;
-  overflow: hidden;
-  isolation: isolate;
+
+.scene-art{
+  position:relative;
+  width:100%;
+  max-width:360px;            /* the figures are composed for a ~360px stage */
+  margin:0 auto 1.2rem;       /* a centered framed illustration at the top of the card */
+  height:124px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  background:#16181d;
+  isolation:isolate;
 }
 
-/* Shared lighting: a faint top sheen + a settling bottom vignette, so every
-   motif sits in the same lit box and no gradient reaches a flat edge. */
-.scene-art::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  border-radius: inherit;
-  pointer-events: none;
+/* shared low-key stage: faint top vignette so all nine read as one set */
+.scene-art::before{
+  content:"";
+  position:absolute; inset:0;
   background:
-    radial-gradient(120% 80% at 50% -20%, rgba(232, 230, 225, 0.05), transparent 60%),
-    radial-gradient(140% 120% at 50% 120%, rgba(0, 0, 0, 0.45), transparent 60%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 0 30px rgba(0, 0, 0, 0.4);
+    radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.05), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,0) 28%, rgba(0,0,0,.34) 100%);
+  z-index:5; pointer-events:none;
 }
 
-/* data-reveal — a luminous grid with a gold trend resolving out of the data. */
-.scene-art--data-reveal {
+/* base figure span: a charcoal bust. Each motif overrides size/position. */
+.scene-art-a,.scene-art-b{
+  position:absolute;
+  bottom:0;
+  width:96px;
+  height:74px;                 /* shoulders block */
+  border-radius:46px 46px 0 0; /* rounded shoulder trapezoid */
+  background:linear-gradient(180deg,#1c1f25,#0d0f12);
+  z-index:2;
+}
+/* head = ::before on each span */
+.scene-art-a::before,.scene-art-b::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:58px;                 /* sits above shoulders w/ small neck gap */
+  width:40px; height:40px;     /* ~0.42x shoulder width */
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:linear-gradient(180deg,#1d2127,#0e1014);
+  z-index:3;
+}
+
+/* =======================================================================
+   1. PRESSURE  — two matched busts, inward, gold seam dead center
+   ======================================================================= */
+.scene-art--pressure{
+  background:#15171c;
+}
+/* a thin, hard tense SEAM/crack dead-center — a DIVIDE between the two, not a
+   light pillar they flank. Narrow gold line with a slight jagged offset; only a
+   tight glow hugs it (no wide wash). clip-path gives it a faint zig so it reads
+   as a fault-line/crack rather than a doorway. */
+.scene-art--pressure::after{
+  content:"";
+  position:absolute; top:0; bottom:0; left:50%;
+  width:10px; transform:translateX(-50%);
+  clip-path:polygon(40% 0, 60% 0, 44% 34%, 64% 50%, 40% 66%, 60% 100%, 40% 100%, 56% 66%, 36% 50%, 56% 34%);
+  background:linear-gradient(180deg,
+     rgba(245,210,140,.95) 0%,
+     rgba(217,164,65,.85) 50%,
+     rgba(245,210,140,.95) 100%);
+  box-shadow:0 0 6px rgba(217,164,65,.7);
+  z-index:1;
+}
+/* left figure, turned inward (toward center) */
+.scene-art--pressure .scene-art-a{
+  left:14px; width:108px; height:80px;
+  border-radius:54px 50px 0 0;
   background:
-    linear-gradient(115deg, transparent 38%, rgba(217, 164, 65, 0.14) 50%, transparent 62%),
-    radial-gradient(60% 120% at 80% 115%, rgba(217, 164, 65, 0.2), transparent 60%),
-    linear-gradient(rgba(42, 46, 55, 0.55) 1px, transparent 1px) 0 0 / 100% 22px,
-    linear-gradient(90deg, rgba(42, 46, 55, 0.55) 1px, transparent 1px) 0 0 / 26px 100%,
-    #16181d;
+    linear-gradient(90deg, #0c0e11 30%, #221a10 88%, #3a2b14 100%); /* inner edge warms */
+  box-shadow:inset -10px 0 14px -6px rgba(245,205,120,.55);          /* inner gold rim */
 }
-.scene-art--data-reveal::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(0deg, rgba(217, 164, 65, 0), rgba(217, 164, 65, 0.55) 70%, var(--accent));
-  clip-path: polygon(0 100%, 10% 86%, 22% 88%, 34% 70%, 46% 74%, 58% 52%, 70% 58%, 82% 34%, 100% 40%, 100% 100%);
-  opacity: 0.85;
+.scene-art--pressure .scene-art-a::before{
+  left:auto; right:8px; transform:none; bottom:62px;
+  background:radial-gradient(circle at 80% 50%, #2a2113, #16120b 55%, #0c0e11 80%);
+  box-shadow:inset -6px 0 8px -3px rgba(245,205,120,.6);
 }
-
-/* silence — a near-dead usage field: sparse faint bars, one lonely gold tick. */
-.scene-art--silence {
+/* right figure = the OTHER party — cool neutral charcoal (NOT you/gold);
+   inner edge catches only the pale seam light, never warm */
+.scene-art--pressure .scene-art-b{
+  right:14px; left:auto; width:108px; height:80px;
+  border-radius:50px 54px 0 0;
   background:
-    repeating-linear-gradient(90deg, transparent 0 30px, rgba(154, 160, 170, 0.1) 30px 32px),
-    linear-gradient(rgba(154, 160, 170, 0.05), rgba(154, 160, 170, 0.05)),
-    #16181d;
+    linear-gradient(270deg, #0c0e11 30%, #16191f 88%, #21262e 100%);
+  box-shadow:inset 10px 0 14px -6px rgba(190,200,214,.30);
 }
-.scene-art--silence::before {
-  content: '';
-  position: absolute;
-  left: 64%;
-  bottom: 16%;
-  width: 3px;
-  height: 42%;
-  z-index: 2;
-  border-radius: 2px;
-  background: linear-gradient(var(--accent), rgba(217, 164, 65, 0.2));
-  box-shadow: 0 0 12px 1px rgba(217, 164, 65, 0.5);
+.scene-art--pressure .scene-art-b::before{
+  left:8px; right:auto; transform:none; bottom:62px;
+  background:radial-gradient(circle at 20% 50%, #1b1f26, #121419 55%, #0c0e11 80%);
+  box-shadow:inset 6px 0 8px -3px rgba(190,200,214,.32);
 }
 
-/* thread — overlapping chat-bubble silhouettes (the channel hues) drifting up. */
-.scene-art--thread {
+/* =======================================================================
+   2. DATA-REVEAL — bust bottom-left faces a screen glow filling right half;
+      one tall gold chart spike + short gray baseline bars
+   ======================================================================= */
+.scene-art--data-reveal{ background:#14161b; }
+/* a real screen RECTANGLE on the right, glowing warm/gold (your discovery).
+   No floating disc. ::after = the screen panel + its inner warm wash. */
+.scene-art--data-reveal::after{
+  content:"";
+  position:absolute; right:24px; top:20px; bottom:20px;
+  width:128px;
+  border-radius:5px;
   background:
-    radial-gradient(18px 14px at 22% 70%, rgba(122, 167, 224, 0.22) 60%, transparent 62%),
-    radial-gradient(22px 16px at 44% 56%, rgba(201, 139, 208, 0.2) 60%, transparent 62%),
-    radial-gradient(16px 12px at 60% 74%, rgba(95, 179, 122, 0.2) 60%, transparent 62%),
-    radial-gradient(26px 18px at 74% 42%, rgba(122, 167, 224, 0.16) 60%, transparent 62%),
-    radial-gradient(14px 11px at 86% 60%, rgba(201, 139, 208, 0.16) 60%, transparent 62%),
-    #16181d;
+    linear-gradient(180deg, rgba(217,164,65,.16), rgba(217,164,65,.05) 60%, transparent),
+    linear-gradient(180deg, #20232b, #16191f);
+  box-shadow:0 0 22px rgba(217,164,65,.20), inset 0 0 0 1px rgba(217,164,65,.16);
+  z-index:1; pointer-events:none;
+}
+/* span.b = the chart INSIDE the screen: short gray baseline bars +
+   (its ::after) the ONE tall gold spike */
+.scene-art--data-reveal .scene-art-b{
+  left:auto; right:38px; bottom:32px;
+  width:64px; height:30px;
+  background:none; border-radius:0;
+  /* three short gray baseline bars */
+  background-image:
+    linear-gradient(180deg,#565b64,#34383f),
+    linear-gradient(180deg,#484c55,#2c3038),
+    linear-gradient(180deg,#484c55,#2c3038);
+  background-repeat:no-repeat;
+  background-size:9px 16px, 9px 10px, 9px 13px;
+  background-position:left bottom, 20px bottom, 40px bottom;
+  z-index:3;
+}
+.scene-art--data-reveal .scene-art-b::before{ display:none; } /* kill inherited head */
+/* the ONE tall gold spike (the reveal) */
+.scene-art--data-reveal .scene-art-b::after{
+  content:"";
+  position:absolute; right:-12px; bottom:0;
+  width:12px; height:60px;
+  border-radius:2px 2px 0 0;
+  background:linear-gradient(180deg,#f3cf86,#d9a441 60%,#a87d2c);
+  box-shadow:0 0 14px rgba(217,164,65,.65);
+  z-index:3;
+}
+/* figure bottom-left = YOU; right edge (face-side toward screen) catches gold */
+.scene-art--data-reveal .scene-art-a{
+  left:8px; width:104px; height:76px;
+  background:linear-gradient(90deg,#0c0e11 55%,#241b0f 100%);
+  box-shadow:inset -12px 0 16px -8px rgba(245,205,120,.5);
+  z-index:2;
+}
+.scene-art--data-reveal .scene-art-a::before{
+  left:auto; right:18px; transform:none; bottom:60px;
+  background:radial-gradient(circle at 78% 45%,#2a2012,#15110a 60%,#0c0e11);
+  box-shadow:inset -5px 0 7px -2px rgba(245,205,120,.55);
 }
 
-/* call — concentric rings radiating from a lit point; an incoming call. */
-.scene-art--call {
+/* =======================================================================
+   3. SILENCE — one tiny bust bottom-center, dwarfed; row of empty seats
+      receding; a weak gold pool only under the lone figure
+   ======================================================================= */
+.scene-art--silence{ background:#15171c; }
+/* ARC OF EMPTY CHAIR-BACKS curving around/behind the lone figure.
+   Each = a tall, rounded-top trapezoid (taller than wide = chair-back),
+   dim cool charcoal, all empty/unlit. Nearer (outer) ones larger, far-arc
+   (inner, behind) ones smaller -> recession. Bases sit in the lower third,
+   on the same floor as the figure. Painted as radial blobs on ::after. */
+.scene-art--silence::after{
+  content:"";
+  position:absolute; inset:0; z-index:1;
+  /* tall, rounded-TOP, flat-bottom chair-backs (taller than wide) on the floor.
+     Each = a vertical capsule clipped at the band floor: a rounded-top column.
+     Drawn as elongated radials whose centers sit BELOW the band so only the
+     rounded top + straight sides show, reading as a chair-back not an oval. */
+  background-image:
+    /* outer-left (nearest, largest) — rounded top ~y86, base bleeds off floor */
+    radial-gradient(16px 34px at 46px 104px, #272b34 84%, transparent 86%),
+    /* inner-left (set back, shorter) */
+    radial-gradient(13px 28px at 98px 100px, #21252c 86%, transparent 88%),
+    /* inner-right */
+    radial-gradient(13px 28px at 262px 100px, #21252c 86%, transparent 88%),
+    /* outer-right (nearest, largest) */
+    radial-gradient(16px 34px at 314px 104px, #272b34 84%, transparent 86%),
+    /* two far-back chair-backs flanking the figure (smallest, highest) */
+    radial-gradient(11px 22px at 142px 96px, #1c1f26 86%, transparent 88%),
+    radial-gradient(11px 22px at 220px 96px, #1c1f26 86%, transparent 88%);
+  background-repeat:no-repeat;
+}
+/* a weak circular gold floor-pool under the lone figure only (the only warm light) */
+.scene-art--silence .scene-art-b{
+  left:50%; bottom:-10px; width:96px; height:38px;
+  transform:translateX(-50%);
+  background:radial-gradient(50% 100% at 50% 100%, rgba(217,164,65,.34), rgba(217,164,65,.08) 55%, transparent 72%);
+  border-radius:0;
+  z-index:2;
+}
+.scene-art--silence .scene-art-b::before{ display:none; }
+/* INTENTIONAL ANCHOR EXCEPTION: the figure is conspicuously TINY (dwarfed),
+   bottom-center, lit only by its own small gold pool. */
+.scene-art--silence .scene-art-a{
+  left:50%; transform:translateX(-50%);
+  width:42px; height:36px;
+  border-radius:21px 21px 0 0;
+  background:linear-gradient(180deg,#2a2417,#15110a);
+  box-shadow:inset 0 7px 10px -5px rgba(217,164,65,.45), 0 0 12px rgba(217,164,65,.18);
+  z-index:3;
+}
+.scene-art--silence .scene-art-a::before{
+  bottom:28px; width:18px; height:18px;
+  background:radial-gradient(circle at 50% 30%,#3a3017,#1c160c 60%,#100c08);
+  box-shadow:inset 0 3px 5px -2px rgba(217,164,65,.5);
+}
+
+/* =======================================================================
+   4. THREAD — two edge busts; two staggered chat bubbles (slack-purple
+      lower-left, dm-blue upper-right) with clipped speech tails.
+      The ONLY two-hue scene.
+   ======================================================================= */
+.scene-art--thread{ background:#14161b; }
+/* slack-purple bubble, lower-left center, with a clipped speech-tail corner */
+.scene-art--thread::after{
+  content:"";
+  position:absolute; left:96px; bottom:22px;
+  width:74px; height:36px;
+  border-radius:16px 16px 16px 4px;
+  background:linear-gradient(180deg,#caa0cf,#9c6aa6);
+  box-shadow:0 0 16px rgba(201,139,208,.45), inset 0 1px 0 rgba(255,255,255,.25);
+  z-index:4;
+}
+/* dm-blue bubble = the left figure's ::after, so it can be a rounded rect
+   with its own small speech-tail (matching the pink one). Figures stay
+   pure charcoal. */
+.scene-art--thread .scene-art-a::after{
+  content:"";
+  position:absolute; left:108px; top:-58px;
+  width:76px; height:36px;
+  border-radius:16px 16px 4px 16px;        /* mirror-rounded, tail at lower-right */
+  background:linear-gradient(180deg,#9bbdec,#6a93d2);
+  box-shadow:0 0 16px rgba(122,167,224,.45), inset 0 1px 0 rgba(255,255,255,.25);
+  z-index:4;
+}
+/* left figure = YOU — faintly GOLD-rimmed (you, in the conversation) */
+.scene-art--thread .scene-art-a{
+  left:-18px; width:88px; height:70px;
+  background:linear-gradient(90deg,#0c0e11 60%,#1c160d 100%);
+  box-shadow:inset -10px 0 14px -8px rgba(217,164,65,.30);
+  z-index:6;
+}
+.scene-art--thread .scene-art-a::before{
+  left:auto; right:14px; transform:none;
+  background:radial-gradient(circle at 80% 50%,#201a10,#13100a 60%,#0c0e11);
+  box-shadow:inset -5px 0 7px -3px rgba(217,164,65,.34);
+}
+/* right figure pushed to edge — PURE charcoal */
+.scene-art--thread .scene-art-b{
+  right:-18px; left:auto; width:88px; height:70px;
+  background:linear-gradient(270deg,#0c0e11 60%,#15171d 100%);
+  box-shadow:inset 10px 0 14px -8px rgba(170,180,196,.18);
+  z-index:6;
+}
+.scene-art--thread .scene-art-b::before{
+  left:14px; right:auto; transform:none;
+  background:radial-gradient(circle at 20% 50%,#181b22,#101218 60%,#0c0e11);
+}
+
+/* =======================================================================
+   5. CALL — bust bottom-left, head turned right toward a glowing
+      call-GREEN phone mid-right; concentric green ring-arcs.  Green only.
+   ======================================================================= */
+.scene-art--call{ background:#14161a; }
+/* concentric green ring-arcs radiating from the phone */
+.scene-art--call::after{
+  content:"";
+  position:absolute; right:36px; top:50%;
+  width:140px; height:140px; transform:translateY(-50%);
+  border-radius:50%;
+  z-index:4; pointer-events:none;
   background:
-    radial-gradient(circle at 50% 58%,
-      transparent 0 10px, rgba(95, 179, 122, 0.42) 11px, transparent 13px 26px,
-      rgba(95, 179, 122, 0.28) 27px, transparent 29px 44px,
-      rgba(95, 179, 122, 0.16) 45px, transparent 47px),
-    radial-gradient(circle at 50% 58%, rgba(95, 179, 122, 0.16), transparent 36%),
-    #16181d;
+    radial-gradient(closest-side, transparent 56%, rgba(95,179,122,.40) 60%, transparent 63%),
+    radial-gradient(closest-side, transparent 76%, rgba(95,179,122,.26) 80%, transparent 83%),
+    radial-gradient(closest-side, rgba(95,179,122,.16), transparent 48%);
 }
-.scene-art--call::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  width: 12px;
-  height: 12px;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  border-radius: 50%;
-  background: var(--call);
-  box-shadow: 0 0 10px 1px rgba(95, 179, 122, 0.7);
+/* the glowing green phone (rounded rect) = span.b */
+.scene-art--call .scene-art-b{
+  right:64px; left:auto; top:50%; bottom:auto;
+  width:26px; height:44px; transform:translateY(-50%) rotate(8deg);
+  border-radius:7px;
+  background:linear-gradient(180deg,#7fd49a,#4f9c6d);
+  box-shadow:0 0 18px rgba(95,179,122,.7), inset 0 0 0 1px rgba(255,255,255,.18);
+  z-index:5;
+}
+.scene-art--call .scene-art-b::before{ display:none; }
+/* figure bottom-left = YOU (gold). Leans/angles TOWARD the phone (summoned):
+   the whole bust is sheared rightward so the shoulders + head tilt to the
+   right. Face-side (right) catches the green phone-light; warm gold base rim. */
+.scene-art--call .scene-art-a{
+  left:14px; width:108px; height:80px;
+  transform:skewX(-9deg) rotate(2deg);
+  transform-origin:bottom left;
+  background:linear-gradient(96deg,#100b06 48%,#33260f 100%);
+  box-shadow:
+     inset -12px 0 16px -8px rgba(95,179,122,.42),   /* face-side green spill */
+     inset 0 10px 16px -8px rgba(217,164,65,.45);     /* warm gold (you) */
+}
+.scene-art--call .scene-art-a::before{
+  left:auto; right:14px; transform:none; bottom:62px;
+  background:radial-gradient(circle at 80% 45%,#221a0f,#14100a 60%,#0c0e11);
+  box-shadow:
+     inset -5px 0 7px -2px rgba(95,179,122,.5),
+     inset 3px 2px 6px -3px rgba(217,164,65,.35);
 }
 
-/* room — a spotlit round table seen from above, ringed with seats; a standup. */
-.scene-art--room {
+/* =======================================================================
+   6. ROOM — shallow arc of 5 small busts (round-table rim); ONE off-center
+      lit gold & forward, the other four flat charcoal.
+   ======================================================================= */
+.scene-art--room{ background:#15171c; }
+/* faint round-table rim glow low-center */
+.scene-art--room::after{
+  content:"";
+  position:absolute; left:50%; bottom:-44px;
+  width:250px; height:96px; transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(closest-side, rgba(217,164,65,.10), transparent 70%);
+  box-shadow:inset 0 8px 16px -8px rgba(217,164,65,.22);
+  z-index:1;
+}
+/* a shallow inward ARC of colleagues CLOSING AROUND you (not a lineup):
+   the two EDGE figures are back-of-head silhouettes (low, large, no neck gap
+   = seen from behind, near the viewer), the inner two are smaller heads+shoulders
+   set back. Heights step UP toward center then the gold YOU breaks the arc. */
+.scene-art--room::before{
+  background-image:
+    /* edge backs-of-heads (nearest, largest, low — turned away) */
+    radial-gradient(26px 24px at 40px 108px,#202329 80%,transparent 82%),
+    radial-gradient(26px 24px at 320px 108px,#202329 80%,transparent 82%),
+    /* inner colleagues — heads */
+    radial-gradient(circle 11px at 104px 58px,#242832 72%,transparent 74%),
+    radial-gradient(circle 11px at 256px 58px,#242832 72%,transparent 74%),
+    /* inner colleagues — shoulders, set back */
+    radial-gradient(26px 30px at 104px 100px,#1b1e25 80%,transparent 82%),
+    radial-gradient(26px 30px at 256px 100px,#1b1e25 80%,transparent 82%),
+    /* shared vignette kept */
+    radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.05), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,0) 28%, rgba(0,0,0,.34) 100%);
+  background-repeat:no-repeat;
+  z-index:2;
+}
+.scene-art--room .scene-art-a{ display:none; }   /* unused */
+/* span.b = the ONE gold-lit, forward figure, off-center */
+.scene-art--room .scene-art-b{
+  left:166px; bottom:2px; width:52px; height:48px;
+  border-radius:26px 26px 0 0;
+  background:linear-gradient(180deg,#3a2c14,#1a140b);
+  box-shadow:
+     inset 0 8px 14px -6px rgba(245,205,120,.7),
+     0 0 18px rgba(217,164,65,.4);
+  z-index:3;
+}
+.scene-art--room .scene-art-b::before{
+  bottom:36px; width:24px; height:24px;
+  background:radial-gradient(circle at 50% 30%,#5a4422,#2a2012 60%,#160f08);
+  box-shadow:inset 0 4px 6px -2px rgba(245,205,120,.7);
+}
+
+/* =======================================================================
+   7. SPOTLIGHT — one bust bottom-center inside a top-down gold cone;
+      elliptical floor pool; everything outside the cone black.
+   ======================================================================= */
+.scene-art--spotlight{ background:#0e0f12; }
+/* the descending gold cone (trapezoid, top-down gradient) */
+.scene-art--spotlight::after{
+  content:"";
+  position:absolute; top:0; left:50%; bottom:0;
+  width:210px; transform:translateX(-50%);
+  clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);
+  background:linear-gradient(180deg, rgba(245,210,140,.55), rgba(217,164,65,.18) 55%, rgba(217,164,65,.04) 100%);
+  filter:blur(1px);
+  z-index:1;
+}
+/* elliptical gold floor pool = span.b */
+.scene-art--spotlight .scene-art-b{
+  left:50%; bottom:-26px; width:170px; height:62px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(closest-side, rgba(245,210,140,.5), rgba(217,164,65,.12) 60%, transparent 75%);
+  z-index:1;
+}
+.scene-art--spotlight .scene-art-b::before{ display:none; }
+/* figure bottom-center, top-lit: brightest on head/shoulders */
+.scene-art--spotlight .scene-art-a{
+  left:50%; transform:translateX(-50%);
+  width:104px; height:82px;
+  background:linear-gradient(180deg,#4a3a1d 0%,#241a0d 45%,#0e0c08 100%);
+  box-shadow:inset 0 12px 18px -8px rgba(245,210,140,.8);
+  z-index:3;
+}
+.scene-art--spotlight .scene-art-a::before{
+  bottom:64px; width:42px; height:42px;
+  background:radial-gradient(circle at 50% 22%, #6a5026, #2c2011 55%, #14100a 80%);
+  box-shadow:inset 0 6px 9px -3px rgba(245,210,140,.85);
+}
+/* faintest gold cast-pool/shadow right at the figure's feet so it's grounded */
+.scene-art--spotlight .scene-art-a::after{
+  content:"";
+  position:absolute; left:50%; bottom:-6px;
+  width:120px; height:20px; transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(closest-side, rgba(217,164,65,.34), rgba(120,90,40,.10) 55%, transparent 72%);
+  z-index:-1;
+}
+
+/* =======================================================================
+   8. AFTERMATH — one bust seen FROM BEHIND (square symmetric shoulders,
+      centered faceless head), set back, low warm horizon, DIM gold.
+   ======================================================================= */
+.scene-art--aftermath{ background:#15171b; }
+/* LOW dim desaturated gold->charcoal horizon strip (dimmer than spotlight),
+   sitting just below the small set-back figure; below it the FLOOR falls to
+   black toward the viewer (receding ground). */
+.scene-art--aftermath::after{
+  content:"";
+  position:absolute; left:0; right:0; top:64px; bottom:0;
+  background:linear-gradient(180deg,
+     rgba(150,126,84,.30) 0%,        /* dim warm horizon line */
+     rgba(110,96,72,.14) 22%,
+     rgba(20,21,25,.55) 60%,
+     #0c0d10 100%);                  /* ground falls to black */
+  filter:blur(.5px);
+  z-index:1;
+}
+/* span.b = a faint CONVERGING PATH (forced-perspective ground plane / light-trail)
+   running from wide at the viewer's feet up to a point at the figure/horizon —
+   so the departure reads as motion AWAY, not just a small figure. A trapezoid
+   narrowing upward, dim warm, brightest near the horizon vanishing point. */
+.scene-art--aftermath .scene-art-b{
+  display:block;
+  left:50%; bottom:0; width:150px; height:78px;
+  transform:translateX(-50%);
+  border-radius:0;
+  clip-path:polygon(46% 0, 54% 0, 100% 100%, 0 100%);  /* narrow top -> wide base */
+  background:linear-gradient(180deg,
+     rgba(184,156,104,.30) 0%,        /* bright at the vanishing point */
+     rgba(120,104,74,.12) 30%,
+     rgba(60,56,46,.05) 60%,
+     transparent 100%);               /* fades toward the viewer */
+  z-index:2;                          /* above the horizon strip, below the figure head */
+}
+.scene-art--aftermath .scene-art-b::before{ display:none; }
+/* INTENTIONAL ANCHOR EXCEPTION: a SMALL back-silhouette set HIGH & centered,
+   its BASE around the band's vertical midline (NOT bottom-anchored) so we look
+   PAST it into depth. Back-view: square symmetric shoulders, centered faceless
+   head, thin DIM gold back-rim (still you). Smaller than every other figure. */
+.scene-art--aftermath .scene-art-a{
+  left:50%; transform:translateX(-50%);
+  bottom:48px;                       /* base ~ vertical midline -> distance */
+  width:62px; height:34px;
+  border-radius:14px 14px 0 0;       /* square broad shoulders */
+  background:linear-gradient(180deg,#181b20,#0e1014);
+  box-shadow:inset 0 8px 12px -8px rgba(168,139,92,.34);  /* dim gold back-rim */
+  z-index:3;
+}
+/* faceless centered head */
+.scene-art--aftermath .scene-art-a::before{
+  bottom:26px; width:24px; height:24px;
+  background:linear-gradient(180deg,#191c21,#0e1014);
+  box-shadow:inset 0 5px 7px -4px rgba(168,139,92,.34);
+}
+
+/* =======================================================================
+   9. SUNSET — bust bottom-left facing a DIMMING screen; rectangle fades
+      weak-gold(left) -> near-black(right); one faint scanline.  Darkest band.
+   ======================================================================= */
+.scene-art--sunset{ background:#0b0c0e; }
+/* right third of the band forced to TRUE BLACK (darkest of the whole series) */
+.scene-art--sunset::before{
   background:
-    radial-gradient(ellipse 70px 30px at 50% 50%, transparent 60%, rgba(217, 164, 65, 0.28) 62%, transparent 70%),
-    radial-gradient(ellipse 120px 70px at 50% 40%, rgba(232, 230, 225, 0.1), transparent 70%),
-    radial-gradient(ellipse 90px 50px at 50% 132%, rgba(0, 0, 0, 0.5), transparent 70%),
-    #16181d;
+    linear-gradient(90deg, transparent 60%, #000 96%),
+    radial-gradient(120% 80% at 50% -20%, rgba(255,255,255,.03), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,0) 28%, rgba(0,0,0,.4) 100%);
 }
-.scene-art--room::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+/* the screen GUTTERING OUT: a STEEP horizontal gradient — a weak desaturated
+   warm EMBER at the LEFT edge only -> DEAD BLACK across ~70% of its width.
+   This is conspicuously the darkest lit element in the series (a light
+   collapsing, not an even glow). One last thin scanline at vertical center. */
+.scene-art--sunset::after{
+  content:"";
+  position:absolute; right:30px; top:26px;
+  width:122px; height:72px;
+  border-radius:4px;
   background:
-    radial-gradient(6px 6px at 50% 24%, rgba(154, 160, 170, 0.5), transparent 70%),
-    radial-gradient(6px 6px at 72% 38%, rgba(154, 160, 170, 0.45), transparent 70%),
-    radial-gradient(6px 6px at 72% 64%, rgba(154, 160, 170, 0.45), transparent 70%),
-    radial-gradient(6px 6px at 50% 78%, rgba(154, 160, 170, 0.5), transparent 70%),
-    radial-gradient(6px 6px at 28% 64%, rgba(154, 160, 170, 0.45), transparent 70%),
-    radial-gradient(6px 6px at 28% 38%, rgba(154, 160, 170, 0.45), transparent 70%);
+    /* last scanline: brightest at the left, fading to nothing (the last flicker) */
+    linear-gradient(90deg, rgba(232,205,150,.72) 0%, rgba(150,132,98,.20) 26%, transparent 46%)
+      left 6px top 50% / 66px 2px no-repeat,
+    /* the guttering screen: ember left only, dead black by ~30% across */
+    linear-gradient(90deg,
+       rgba(150,120,70,.30) 0%,
+       rgba(90,74,46,.10) 14%,
+       #050506 30%,
+       #050506 100%),
+    /* the panel body, near-black */
+    linear-gradient(180deg, #0a0b0d, #060708);
+  box-shadow:inset 0 0 0 1px rgba(40,38,32,.5);
+  z-index:2;
+}
+.scene-art--sunset .scene-art-b{ display:none; }
+/* figure bottom-left, SLUMPED and TURNED AWAY from the screen (disengaged):
+   head dropped, near (right) shoulder LOWER than far (left) shoulder via a
+   tilt; only the FAINTEST warm rim — dimmer than every other band's figure. */
+.scene-art--sunset .scene-art-a{
+  left:10px; width:106px; height:64px;     /* shorter = slumped */
+  transform:rotate(-4deg);                  /* near shoulder drops to the right */
+  transform-origin:bottom left;
+  border-radius:50px 40px 0 0;              /* asymmetric slump */
+  background:linear-gradient(82deg,#0c0d10 66%,#19140c 100%);
+  /* thin warm gold rim along the lit (right/screen-side) edge keeps the
+     slumped silhouette readable against the near-black, still the dimmest figure */
+  box-shadow:
+     inset -7px 0 9px -6px rgba(232,200,140,.42),   /* gold rim, screen-side edge */
+     inset 8px 6px 12px -9px rgba(217,164,65,.16);   /* faint far-side trace */
+}
+/* head dropped low and turned away (toward far/left, off the screen) */
+.scene-art--sunset .scene-art-a::before{
+  left:20px; right:auto; transform:none; bottom:46px;
+  width:34px; height:34px;
+  background:radial-gradient(circle at 30% 55%,#121009,#0a0907 60%,#0a0b0e);
+  box-shadow:inset 4px 2px 6px -3px rgba(217,164,65,.16);
 }
 
-/* pressure — converging diagonals tightening into a vignette; mounting stakes. */
-.scene-art--pressure {
-  background:
-    repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 16deg, rgba(217, 164, 65, 0.1) 16deg 17deg, transparent 17deg 30deg),
-    radial-gradient(60% 60% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.55) 100%),
-    #16181d;
-}
-.scene-art--pressure::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: radial-gradient(40% 40% at 50% 50%, rgba(217, 164, 65, 0.16), transparent 70%);
-}
-
-/* spotlight — a single hard beam from a point at the top; being seen. */
-.scene-art--spotlight {
-  background:
-    conic-gradient(from 200deg at 50% -10%, transparent 0deg, rgba(217, 164, 65, 0.22) 25deg, rgba(217, 164, 65, 0.06) 32deg, transparent 40deg),
-    radial-gradient(40px 24px at 50% 96%, rgba(217, 164, 65, 0.3), transparent 70%),
-    #16181d;
-}
-.scene-art--spotlight::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -2px;
-  width: 8px;
-  height: 8px;
-  transform: translateX(-50%);
-  z-index: 2;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px 2px rgba(217, 164, 65, 0.6);
-}
-
-/* aftermath — a low, settled horizon with a faint residual glow; storm passed. */
-.scene-art--aftermath {
-  background:
-    radial-gradient(80% 50% at 50% 100%, rgba(217, 164, 65, 0.18), transparent 70%),
-    linear-gradient(180deg, #181b21 0%, #15171c 62%, #101216 63%, #0e1014 100%);
-}
-.scene-art--aftermath::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 62%;
-  height: 1px;
-  z-index: 2;
-  background: linear-gradient(90deg, transparent, rgba(217, 164, 65, 0.5), transparent);
-}
-
-/* sunset — light fading toward the dark edge; the work going quietly dark. */
-.scene-art--sunset {
-  background:
-    linear-gradient(90deg, rgba(217, 164, 65, 0.16), rgba(217, 164, 65, 0.04) 40%, transparent 70%),
-    linear-gradient(180deg, #1a1c20, #141619 70%, #0e1014);
-}
-.scene-art--sunset::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 58%;
-  height: 1px;
-  z-index: 2;
-  background: linear-gradient(90deg, rgba(217, 164, 65, 0.45), rgba(217, 164, 65, 0.12) 45%, transparent 75%);
-}
-
-/* Ambient motion — opacity/transform only, slow, never distracting. */
-@keyframes scene-art-breathe { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
-@keyframes scene-art-drift { from { transform: translateY(3px); } to { transform: translateY(-3px); } }
-
-.scene-art--data-reveal::before { animation: scene-art-breathe 5.5s ease-in-out infinite; }
-.scene-art--silence::before { animation: scene-art-breathe 4s ease-in-out infinite; }
-.scene-art--call::before { animation: scene-art-breathe 1.8s ease-in-out infinite; }
-.scene-art--spotlight { animation: scene-art-breathe 6s ease-in-out infinite; }
-.scene-art--thread { animation: scene-art-drift 6s ease-in-out infinite alternate; }
+/* =======================================================================
+   MOTION — near-zero, opacity only; the phone ring & spike breathe faintly.
+   ======================================================================= */
+@keyframes scene-pulse{ 0%,100%{opacity:.85} 50%{opacity:1} }
+.scene-art--call::after{ animation:scene-pulse 3.2s ease-in-out infinite; }
+.scene-art--data-reveal .scene-art-b::after{ animation:scene-pulse 4s ease-in-out infinite; }
 
 /* Respect a reduced-motion preference: no hover/commit transitions or shifts.
    (The renderer also skips the commit-beat pause when this is set.) */
