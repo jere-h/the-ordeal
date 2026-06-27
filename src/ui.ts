@@ -1,4 +1,4 @@
-import { el } from './dom';
+import { el, sceneArt } from './dom';
 import { ResultScreen, type ResultContext } from './result';
 import { renderBlocks } from './blocks';
 import type { Beat } from './scenes/types';
@@ -41,14 +41,10 @@ export class UIRenderer {
     this.root.innerHTML = '';
     const card = el('section', 'card');
 
-    // A decorative, in-theme CSS-art band that sets the passage's mood (above the
-    // beat indicator). Purely presentational — aria-hidden, drawn entirely in CSS.
+    // An illustrative, in-theme CSS-art band depicting the passage's situation
+    // (above the beat indicator). Purely presentational — aria-hidden, all CSS.
     const art = this.engine.currentArt();
-    if (art) {
-      const band = el('div', `scene-art scene-art--${art}`);
-      band.setAttribute('aria-hidden', 'true');
-      card.appendChild(band);
-    }
+    if (art) card.appendChild(sceneArt(art));
 
     const beat = this.engine.currentBeat();
     if (beat) card.appendChild(this.beatIndicator(beat));

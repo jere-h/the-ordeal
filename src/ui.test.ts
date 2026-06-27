@@ -38,14 +38,17 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelectorAll('.choice-detail').length).toBeGreaterThan(0);
   });
 
-  it('renders a decorative, aria-hidden CSS-art band for the passage motif', () => {
+  it('renders an illustrative, aria-hidden CSS-art band (with figure layers) for the motif', () => {
     render(new StoryEngine(ordeal1), ctx()).render();
     const band = root.querySelector('.scene-art');
     expect(band).not.toBeNull();
     expect(band?.classList.contains('scene-art--data-reveal')).toBe(true); // ordeal1 setup motif
     expect(band?.getAttribute('aria-hidden')).toBe('true');
-    // the band is the card's first child — the masthead above the beat indicator
+    // the band is the card's first child — the illustration above the beat indicator
     expect(root.querySelector('.card')?.firstElementChild).toBe(band);
+    // the two inner span layers the motif CSS draws its figures from
+    expect(band?.querySelector('.scene-art-a')).not.toBeNull();
+    expect(band?.querySelector('.scene-art-b')).not.toBeNull();
   });
 
   it('renders the setup beat with a data chip and four choice buttons', () => {

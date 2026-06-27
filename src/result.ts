@@ -1,4 +1,4 @@
-import { el } from './dom';
+import { el, sceneArt } from './dom';
 import { renderBlocks } from './blocks';
 import { JournalStore } from './journal';
 import { PullMeter } from './pull';
@@ -62,11 +62,9 @@ export class ResultScreen {
     this.root.innerHTML = '';
     const card = el('section', 'card result');
 
-    // A settling "aftermath" band bookends the arc (same regardless of stance — it
-    // must not read as a grade). Decorative, drawn in CSS.
-    const band = el('div', 'scene-art scene-art--aftermath');
-    band.setAttribute('aria-hidden', 'true');
-    card.appendChild(band);
+    // A settling "aftermath" band (a lone figure walking out) bookends the arc —
+    // the same regardless of stance, so it never reads as a grade.
+    card.appendChild(sceneArt('aftermath'));
 
     // 1. The outcome prose is the payoff — give it the top of the card and room.
     const outcome = el('div', 'outcome');
