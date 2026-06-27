@@ -48,6 +48,103 @@ body {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
 }
 
+/* ---- landing page / story picker ---- */
+.menu-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.7rem;
+  letter-spacing: 0.01em;
+}
+
+.menu-sub {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--bubble);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.05s;
+}
+
+.menu-item:hover {
+  border-color: var(--accent);
+  background: #262b34;
+}
+
+.menu-item:active {
+  transform: translateY(1px);
+}
+
+.menu-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+  padding-top: 0.18rem;
+}
+
+.menu-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.menu-item-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.menu-item-blurb {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.menu-arrow {
+  color: var(--muted);
+  padding-top: 0.18rem;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.menu-item:hover .menu-arrow {
+  color: var(--accent);
+  transform: translateX(2px);
+}
+
+.menu-link {
+  display: block;
+  margin: 1rem auto 0;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  transition: color 0.15s;
+}
+
+.menu-link:hover {
+  color: var(--accent);
+}
+
 /* ---- beat indicator ---- */
 .beat {
   display: flex;

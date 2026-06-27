@@ -38,6 +38,10 @@ Pages too — `base: './'` keeps asset paths relative). No env vars, no server.
 - `src/scenes/types.ts` — the scene-graph contract (passages, choices, 0–3 deltas).
 - `src/scenes/ordeal1.ts` — the authored scene: one setup, 4 choices, 4 fallouts,
   one shared result. Calibrated so **no choice wins both axes**.
+- `src/menu.ts` / `src/main.ts` — the landing page (story picker) and a tiny hash
+  router. Loading the app shows the menu; `#/play/<id>` plays a story, so a refresh
+  stays put and the back button returns to the picker instead of restarting a fixed
+  sequence. Finishing a story hands off to the next one or back to the menu.
 - `src/story.ts` — `StoryEngine`: the format-agnostic seam (swap in Ink later here).
 - `src/ui.ts` / `src/result.ts` — render passages/choices, then the two-axis result
   + trade-off readout + reflection box + "Would you play Ordeal #2?" CTA.

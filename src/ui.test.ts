@@ -74,4 +74,19 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelector('button.next')).toBeNull();
     expect(root.querySelector('.teaser')).not.toBeNull();
   });
+
+  it('offers a "back to menu" control on the result when onMenu is provided', () => {
+    let toMenu = false;
+    playEscalateDefer(ctx({ onMenu: () => (toMenu = true) }));
+
+    const back = root.querySelector('button.menu-link') as HTMLButtonElement;
+    expect(back).not.toBeNull();
+    back.click();
+    expect(toMenu).toBe(true);
+  });
+
+  it('omits the "back to menu" control when no onMenu is wired', () => {
+    playEscalateDefer(ctx());
+    expect(root.querySelector('button.menu-link')).toBeNull();
+  });
 });
