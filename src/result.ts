@@ -11,6 +11,8 @@ export interface ResultContext {
   ordealId: string;
   nextTitle?: string;
   onNext?: () => void;
+  /** Return to the landing page / story picker. Present whenever the app is menu-driven. */
+  onMenu?: () => void;
 }
 
 // Flush the in-progress reflection if the tab is hidden/closed within the
@@ -98,6 +100,17 @@ export class ResultScreen {
       card.appendChild(next);
     } else {
       card.appendChild(el('p', 'teaser', nextTeaser));
+    }
+
+    // Always offer a route back to the story picker when the app is menu-driven.
+    if (this.ctx.onMenu) {
+      const menu = el('button', 'menu-link', '← All stories') as HTMLButtonElement;
+      menu.type = 'button';
+      menu.addEventListener('click', () => {
+        this.journal.flush();
+        this.ctx.onMenu!();
+      });
+      card.appendChild(menu);
     }
 
     this.root.appendChild(card);

@@ -16,6 +16,18 @@ describe('UI play-through (DOM)', () => {
 
   const ctx = (over: Record<string, unknown> = {}) => ({ ordealId: 'ordeal1', ...over });
 
+  it('separates the story thread from a labeled action dock holding the choices', () => {
+    new UIRenderer(root, new StoryEngine(ordeal1), ctx()).render();
+
+    const actions = root.querySelector('.actions');
+    expect(actions).not.toBeNull();
+    expect(actions?.getAttribute('role')).toBe('group');
+    expect(root.querySelector('.actions-label')?.textContent).toBe('Your move');
+    // Every choice lives inside the dock, not loose in the reading thread.
+    expect(actions?.querySelectorAll('button.choice')).toHaveLength(4);
+    expect(root.querySelector('.thread')?.querySelector('button.choice')).toBeNull();
+  });
+
   it('renders the setup beat with a data chip and four choice buttons', () => {
     new UIRenderer(root, new StoryEngine(ordeal1), ctx()).render();
 
@@ -73,5 +85,20 @@ describe('UI play-through (DOM)', () => {
     playEscalateDefer(ctx()); // no nextTitle/onNext
     expect(root.querySelector('button.next')).toBeNull();
     expect(root.querySelector('.teaser')).not.toBeNull();
+  });
+
+  it('offers a "back to menu" control on the result when onMenu is provided', () => {
+    let toMenu = false;
+    playEscalateDefer(ctx({ onMenu: () => (toMenu = true) }));
+
+    const back = root.querySelector('button.menu-link') as HTMLButtonElement;
+    expect(back).not.toBeNull();
+    back.click();
+    expect(toMenu).toBe(true);
+  });
+
+  it('omits the "back to menu" control when no onMenu is wired', () => {
+    playEscalateDefer(ctx());
+    expect(root.querySelector('button.menu-link')).toBeNull();
   });
 });
