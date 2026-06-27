@@ -30,6 +30,13 @@ export class UIRenderer {
     renderBlocks(thread, this.engine.currentBlocks());
     card.appendChild(thread);
 
+    // The action dock: a visually distinct, labeled zone so the player can tell
+    // where the story stops (passive reading, above) and their move starts.
+    const actions = el('div', 'actions');
+    actions.setAttribute('role', 'group');
+    actions.setAttribute('aria-label', 'Your options');
+    actions.appendChild(el('p', 'actions-label', 'Your move'));
+
     const list = el('div', 'choices');
     this.engine.currentChoices().forEach((choice, i) => {
       const button = el('button', 'choice', choice.label) as HTMLButtonElement;
@@ -41,7 +48,8 @@ export class UIRenderer {
       });
       list.appendChild(button);
     });
-    card.appendChild(list);
+    actions.appendChild(list);
+    card.appendChild(actions);
     this.root.appendChild(card);
   }
 
