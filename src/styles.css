@@ -431,78 +431,131 @@ body {
   color: var(--ink);
 }
 
-.scores {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 0.5rem 0 1.25rem;
+/* ---- the stance: a named outcome + one trade-off spectrum (not two grades) ---- */
+.stance {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+  margin: 0 0 1.3rem;
 }
 
-.axis-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.stance-name {
+  margin: 0 0 0.3rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 
-.axis-name {
+.stance-line {
+  margin: 0 0 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* The tug-of-war: Survivability pulls left, Self-Advocacy right; the marker is
+   where you stood. A spectrum can't be "failed" — it just shows your position. */
+.meter {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.meter-end {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
 }
 
-.axis-icon {
+.meter-end--right {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.meter-end .axis-icon {
   display: inline-flex;
-  width: 16px;
-  height: 16px;
-  color: var(--accent);
+  width: 13px;
+  height: 13px;
+  color: var(--muted);
 }
 
-.axis-icon svg {
+.meter-end .axis-icon svg {
   width: 100%;
   height: 100%;
   fill: currentColor;
 }
 
-/* Demoted: the number is a footnote to the bar's shape, not a grade to chase. */
-.axis-value {
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-variant-numeric: tabular-nums;
+.meter-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  /* a quiet two-pole gradient — hints the ends without implying a fill to maximize */
+  background: linear-gradient(90deg, var(--seg), var(--line) 50%, var(--seg));
 }
 
-.bar {
-  display: flex;
-  gap: 6px;
-  margin: 0.4rem 0 0.3rem;
+.meter-origin {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 1px;
+  height: 12px;
+  background: var(--muted);
+  opacity: 0.45;
+  transform: translateX(-0.5px);
 }
 
-.seg {
-  flex: 1;
-  height: 8px;
-  border-radius: 4px;
-  background: var(--seg);
+/* The roads not taken — every other ending's position, faint. */
+.meter-ghost {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.3;
+  transform: translate(-50%, -50%);
 }
 
-.seg.filled {
+/* Your position. Size + glow scale with how decisively you leaned. */
+.meter-marker {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   background: var(--accent);
+  border: 2px solid var(--bg);
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
-.axis-blurb {
-  margin: 0;
-  font-size: 0.85rem;
+.meter-marker.is-soft {
+  width: 11px;
+  height: 11px;
+  opacity: 0.85;
+}
+
+.meter-marker.is-firm {
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 0 0 4px rgba(217, 164, 65, 0.18);
+}
+
+.raw-toggle {
+  margin-top: 0.9rem;
+}
+
+.raw {
+  margin: 0.4rem 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
   color: var(--muted);
-}
-
-.tradeoff {
-  font-size: 0.95rem;
-  color: var(--ink);
-  background: var(--accent-soft);
-  border-left: 3px solid var(--accent);
-  padding: 0.8rem 1rem;
-  border-radius: 0 8px 8px 0;
-  margin: 0 0 1.3rem;
 }
 
 .reflect-block {

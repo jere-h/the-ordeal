@@ -73,6 +73,31 @@ export class StoryEngine {
   }
 
   /**
+   * Every root→terminal path's total — the full spread of outcomes the scene can
+   * produce. The result screen plots these as faint "roads not taken" marks on the
+   * trade-off spectrum, so the player sees their choice as one fork among the
+   * others (no invented per-player stats — just the scene's own geometry).
+   */
+  allPathScores(): Deltas[] {
+    const out: Deltas[] = [];
+    const walk = (id: string, acc: Deltas): void => {
+      const choices = this.byId.get(id)?.choices ?? [];
+      if (choices.length === 0) {
+        out.push(acc);
+        return;
+      }
+      for (const c of choices) {
+        walk(c.to, {
+          survivability: acc.survivability + c.deltas.survivability,
+          self_advocacy: acc.self_advocacy + c.deltas.self_advocacy,
+        });
+      }
+    };
+    walk(this.start, { survivability: 0, self_advocacy: 0 });
+    return out;
+  }
+
+  /**
    * The maximum value reachable on each axis across all root→terminal paths —
    * the scene's per-axis ceiling, computed independently per axis (the
    * survivability-max path and self_advocacy-max path need not be the same path).

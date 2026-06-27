@@ -58,7 +58,6 @@ export class ResultScreen {
   show(): void {
     this.pull.recordPlay();
     const { survivability, self_advocacy } = this.engine.scores();
-    const max = this.engine.maxScores();
 
     this.root.innerHTML = '';
     const card = el('section', 'card result');
@@ -68,24 +67,16 @@ export class ResultScreen {
     renderBlocks(outcome, this.engine.currentBlocks());
     card.appendChild(outcome);
 
-    // 2. Meaning before metric: the trade-off readout frames the bars.
-    card.appendChild(el('p', 'tradeoff', this.tradeoff(survivability, self_advocacy)));
+    // 2. Where you stood — a named stance on ONE trade-off spectrum, not two
+    //    seesawing grades. (The axes are anti-correlated by design, so the honest
+    //    signal is which way you leaned, not two independent scores.)
+    card.appendChild(this.stancePanel(survivability, self_advocacy));
 
-    // 3. The two axes — a shape, not a score.
-    const scores = el('div', 'scores');
-    scores.appendChild(
-      this.axis('survivability', 'Survivability', survivability, max.survivability, 'Kept you employed, trusted, out of the crossfire.'),
-    );
-    scores.appendChild(
-      this.axis('self_advocacy', 'Self-Advocacy', self_advocacy, max.self_advocacy, 'Protected your credit, boundaries, and judgment.'),
-    );
-    card.appendChild(scores);
-
-    // 4. One-tap "which moment hit?" — no forced essay.
+    // 3. One-tap "which moment hit?" — no forced essay.
     card.appendChild(this.reflection());
 
-    // 5. A quiet replay hook — the paths you didn't take are the whole point.
-    card.appendChild(el('p', 'replay-hint', 'Seven other versions of this played out. You only get the one you chose.'));
+    // 4. A quiet replay hook — the pale marks above are the roads you didn't take.
+    card.appendChild(el('p', 'replay-hint', 'The pale marks are the other seven endings. You only got this one.'));
 
     // 6. Hand off to the next ordeal, or tease that the run continues later.
     if (this.ctx.nextTitle && this.ctx.onNext) {
@@ -189,37 +180,129 @@ export class ResultScreen {
     }
   }
 
-  private axis(key: string, name: string, value: number, max: number, blurb: string): HTMLElement {
-    const denom = Math.max(1, max); // never divide a bar into zero segments
-    const wrap = el('div', 'axis');
+  /** The named stance + the single trade-off spectrum, with the other endings
+   *  plotted as faint marks so the player sees their choice as one fork. */
+  private stancePanel(s: number, a: number): HTMLElement {
+    const stance = stanceFor(s, a);
+    const mine = leanOf(s, a);
 
-    const head = el('div', 'axis-head');
-    const nameWrap = el('span', 'axis-name');
+    const panel = el('div', 'stance');
+    panel.appendChild(el('p', 'stance-name', stance.name));
+    panel.appendChild(el('p', 'stance-line', stance.line));
+
+    const meter = el('div', 'meter');
+    meter.setAttribute('role', 'img');
+    meter.setAttribute('aria-label', `Where you stood: ${stance.name} — ${leanLabel(mine)}.`);
+
+    meter.appendChild(this.meterEnd('survivability', 'Survivability', 'left'));
+
+    const track = el('div', 'meter-track');
+    track.appendChild(el('span', 'meter-origin'));
+    // The roads not taken: every other ending's position, faint.
+    const others = dedupeLeans(this.engine.allPathScores().map((p) => leanOf(p.survivability, p.self_advocacy)));
+    for (const lean of others) {
+      const ghost = el('span', 'meter-ghost');
+      ghost.style.left = `${toPct(lean)}%`;
+      track.appendChild(ghost);
+    }
+    // Your marker — size/glow scales with how decisively you leaned.
+    const gap = Math.abs(a - s);
+    const marker = el('span', `meter-marker ${gap >= 5 ? 'is-firm' : gap >= 3 ? 'is-clear' : 'is-soft'}`);
+    marker.style.left = `${toPct(mine)}%`;
+    track.appendChild(marker);
+    meter.appendChild(track);
+
+    meter.appendChild(this.meterEnd('self_advocacy', 'Self-Advocacy', 'right'));
+    panel.appendChild(meter);
+
+    // The raw integers, kept for the curious but demoted out of the way.
+    const raw = el('details', 'raw-toggle');
+    raw.appendChild(el('summary', 'note-summary', 'the raw split'));
+    raw.appendChild(el('p', 'raw', `survivability ${s} · self-advocacy ${a}`));
+    panel.appendChild(raw);
+
+    return panel;
+  }
+
+  private meterEnd(key: string, name: string, side: 'left' | 'right'): HTMLElement {
+    const end = el('span', `meter-end meter-end--${side}`);
     const ic = el('span', 'axis-icon');
     ic.innerHTML = AXIS_ICON[key] ?? '';
-    nameWrap.appendChild(ic);
-    nameWrap.appendChild(el('span', undefined, name));
-    head.appendChild(nameWrap);
-    head.appendChild(el('span', 'axis-value', `${value} / ${denom}`));
-    wrap.appendChild(head);
-
-    const bar = el('div', 'bar');
-    const filled = Math.max(0, Math.min(value, denom)); // clamp to the axis ceiling
-    for (let i = 0; i < denom; i++) {
-      bar.appendChild(el('span', i < filled ? 'seg filled' : 'seg'));
-    }
-    wrap.appendChild(bar);
-    wrap.appendChild(el('p', 'axis-blurb', blurb));
-    return wrap;
+    end.appendChild(ic);
+    end.appendChild(el('span', undefined, name));
+    return end;
   }
+}
 
-  private tradeoff(s: number, a: number): string {
-    if (s > a) {
-      return 'You bought standing and calm — and gave up some ground on protecting your own judgment. A survivable move. Notice what it asked you to swallow.';
+/** Lean along the trade-off spectrum: −1 = pure survivability, +1 = pure
+ *  self-advocacy, 0 = balanced. Normalized by the total because path sums vary
+ *  slightly (5–7) — the honest comparison is which way you tipped, not the raw gap. */
+export function leanOf(s: number, a: number): number {
+  const total = s + a;
+  return total === 0 ? 0 : (a - s) / total;
+}
+
+/** Marker position as a left-percentage on the track (0 = far survivability). */
+function toPct(lean: number): number {
+  return ((lean + 1) / 2) * 100;
+}
+
+function leanLabel(lean: number): string {
+  if (lean <= -0.15) return 'you leaned toward survivability';
+  if (lean >= 0.15) return 'you leaned toward self-advocacy';
+  return 'you held the balance';
+}
+
+/** Collapse near-identical leans so the ghost marks don't stack into a smudge. */
+function dedupeLeans(leans: number[]): number[] {
+  const seen = new Set<number>();
+  const out: number[] = [];
+  for (const l of leans) {
+    const k = Math.round(l * 50) / 50; // ~2% buckets
+    if (!seen.has(k)) {
+      seen.add(k);
+      out.push(l);
     }
-    if (a > s) {
-      return 'You protected your judgment and your credit — and spent political cover to do it. A principled move. Notice what it cost you in the room.';
-    }
-    return 'You split the difference — covered yourself and stayed on record. The balanced move. It still meant giving something up.';
   }
+  return out;
+}
+
+export interface Stance {
+  name: string;
+  line: string;
+}
+
+/** Where you landed on the spectrum, as a neutral archetype (never a moral
+ *  verdict — there is no optimal play) plus the trade-off in one line. Five zones
+ *  on the lean; the raw gap is available to callers for the marker's emphasis. */
+export function stanceFor(s: number, a: number): Stance {
+  const lean = leanOf(s, a);
+  if (lean <= -0.5) {
+    return {
+      name: 'The Operator',
+      line: 'You bought standing and calm, and let the record go where it went. The survivable play — and you know exactly what it asked you to swallow.',
+    };
+  }
+  if (lean <= -0.15) {
+    return {
+      name: 'The Diplomat',
+      line: 'You leaned to cover, a hand still on the truth. Mostly safe, mostly liked — and quietly aware of what you traded for it.',
+    };
+  }
+  if (lean < 0.15) {
+    return {
+      name: 'The Tightrope Walker',
+      line: 'You covered yourself and stayed on record, committing to neither. The even-handed move — and it still cost you a little on both sides.',
+    };
+  }
+  if (lean < 0.5) {
+    return {
+      name: 'The Straight Shooter',
+      line: 'You protected your judgment where it counted, and spent a little cover to do it. Principled, with a read on the room.',
+    };
+  }
+  return {
+    name: 'The Hardliner',
+    line: 'You kept your name on the catch and your judgment whole — and paid for it in political cover. Notice what it cost you in the room.',
+  };
 }

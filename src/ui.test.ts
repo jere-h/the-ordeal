@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ordeal1 } from './scenes/ordeal1';
 import { StoryEngine } from './story';
 import { UIRenderer } from './ui';
+import { stanceFor, leanOf } from './result';
 
 /** Full DOM play-through in jsdom: render → first choice → second decision →
  *  continue → assert the messaged rendering, scores, and the next-ordeal hand-off.
@@ -87,10 +88,17 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelectorAll('button.choice')).toHaveLength(1);
     (root.querySelectorAll('button.choice')[0] as HTMLButtonElement).click(); // continue
 
-    const axisNames = [...root.querySelectorAll('.axis-name')].map((n) => n.textContent);
-    expect(axisNames).toEqual(['Survivability', 'Self-Advocacy']);
-    const axisValues = [...root.querySelectorAll('.axis-value')].map((n) => n.textContent);
-    expect(axisValues).toEqual(['5 / 6', '2 / 6']); // escalate -> defer = 5/2, ceilings 6/6
+    // (5,2) leans survival → a named stance, a marker left of centre, raw demoted.
+    expect(root.querySelector('.stance-name')?.textContent).toBe('The Diplomat');
+    const left = parseFloat((root.querySelector('.meter-marker') as HTMLElement).style.left);
+    expect(left).toBeGreaterThan(0);
+    expect(left).toBeLessThan(50); // left of centre = leaned to survivability
+    expect(root.querySelector('.raw')?.textContent).toContain('survivability 5');
+    expect(root.querySelector('.raw')?.textContent).toContain('self-advocacy 2');
+    expect(root.querySelector('.axis-value')).toBeNull(); // the misleading "N / 6" grade is gone
+
+    // The roads not taken are plotted as faint ghost marks (the scene's spread).
+    expect(root.querySelectorAll('.meter-ghost').length).toBeGreaterThan(1);
 
     expect(JSON.parse(localStorage.getItem('ordeal1-pull')!).plays).toBe(1);
     expect(root.querySelector('button.cta')).toBeNull(); // CTA removed
@@ -143,5 +151,30 @@ describe('UI play-through (DOM)', () => {
   it('omits the "back to menu" control when no onMenu is wired', () => {
     playEscalateDefer(ctx());
     expect(root.querySelector('button.menu-link')).toBeNull();
+  });
+});
+
+/** The trade-off readout: one spectrum, named zones — not two seesawing grades. */
+describe('stance mapping (trade-off spectrum)', () => {
+  it('normalizes lean to [-1, 1] and guards a zero total', () => {
+    expect(leanOf(6, 0)).toBe(-1);
+    expect(leanOf(0, 6)).toBe(1);
+    expect(leanOf(3, 3)).toBe(0);
+    expect(leanOf(0, 0)).toBe(0); // defensive: no divide-by-zero
+  });
+
+  it('names each zone of the spectrum from the real path totals', () => {
+    expect(stanceFor(6, 0).name).toBe('The Operator'); // hard survival lean
+    expect(stanceFor(5, 1).name).toBe('The Operator');
+    expect(stanceFor(5, 2).name).toBe('The Diplomat'); // clear survival lean
+    expect(stanceFor(4, 3).name).toBe('The Tightrope Walker'); // near-tie
+    expect(stanceFor(3, 3).name).toBe('The Tightrope Walker');
+    expect(stanceFor(3, 4).name).toBe('The Tightrope Walker'); // near-tie
+    expect(stanceFor(2, 5).name).toBe('The Straight Shooter'); // clear advocacy lean
+    expect(stanceFor(0, 6).name).toBe('The Hardliner'); // hard advocacy lean
+  });
+
+  it('the survivability and self-advocacy extremes get different names', () => {
+    expect(stanceFor(6, 0).name).not.toBe(stanceFor(0, 6).name);
   });
 });
