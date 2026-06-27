@@ -14,7 +14,11 @@ export interface Deltas {
 }
 
 export interface Choice {
+  /** The punchy lead shown on the button (the gesture, ~3–6 words). */
   label: string;
+  /** Optional second line of nuance/sub-text under the lead, so a choice stays
+   *  scannable without losing the authored texture. */
+  detail?: string;
   deltas: Deltas;
   to: PassageId;
 }
@@ -58,6 +62,9 @@ export interface Scene {
   start: PassageId;
   axes: ['survivability', 'self_advocacy'];
   passages: Passage[];
+  /** Up to a few short, charged beats from this scene, offered on the result
+   *  screen as one-tap "which moment hit hardest?" chips (no forced typing). */
+  moments?: string[];
 }
 
 /** Flatten a block to plain text — used for the accessibility/text fallback and tests. */

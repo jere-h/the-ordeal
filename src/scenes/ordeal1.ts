@@ -54,22 +54,27 @@ export const ordeal1: Scene = {
       ],
       choices: [
         {
-          label: 'Post it in the channel now — error in writing, cc your manager.',
+          label: 'Post it now, publicly',
+          detail: 'error in writing, cc your manager',
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'esc_fight',
         },
         {
-          label: 'Head down. Take the blame quietly at Monday standup.',
+          label: 'Head down, eat it Monday',
+          detail: 'take the blame quietly at standup',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'esc_absorb',
         },
+        // hidden-trap: reads principled, costs credit
         {
-          label: 'Call your manager tonight; let them quarterback the exec comms.',
+          label: 'Loop in your manager first',
+          detail: 'let the person who owns it lead the exec comms',
           deltas: { survivability: 2, self_advocacy: 2 },
           to: 'esc_channel',
         },
         {
-          label: 'Quietly fix the query, write a changelog, mention it in your 1:1.',
+          label: 'Fix it, log it, raise it in your 1:1',
+          detail: 'correct the query, leave a clean changelog',
           deltas: { survivability: 2, self_advocacy: 1 },
           to: 'esc_channel',
         },
@@ -82,18 +87,20 @@ export const ordeal1: Scene = {
       id: 'esc_fight',
       beat: { n: 2, of: 3, label: 'The escalation' },
       blocks: [
-        { kind: 'message', from: 'You', via: 'slack', time: '7:02pm', text: 'Heads up — revenue on the dashboard is overstated ~12%. Refund de-dup bug. Correcting now.', self: true },
-        { kind: 'message', from: 'Manager', via: 'call', time: '7:13pm', text: "Why is a 12% error in writing org-wide before I've seen it? The CFO's chief of staff already called me." },
-        { kind: 'message', from: 'Manager', via: 'call', time: '7:14pm', text: "Let me get ahead of it. The chief of staff offered to own the Monday correction — that gets it off you. Let me make calls." },
+        { kind: 'message', from: 'You', via: 'slack', time: 'Fri 7:02pm', text: 'Heads up — revenue on the dashboard is overstated ~12%. Refund de-dup bug. Correcting now.', self: true },
+        { kind: 'message', from: 'Manager', via: 'call', time: 'Mon 8:40am', text: "Walked in to that 12% sitting in the open channel all weekend. Why is it in writing org-wide before I've seen it? The CFO's chief of staff has already pinged me twice this morning." },
+        { kind: 'message', from: 'Manager', via: 'call', time: 'Mon 8:42am', text: "Let me get ahead of it before standup. The chief of staff offered to own the correction — that gets it off you. Let me make calls." },
       ],
       choices: [
         {
-          label: 'Hold the line: corrected number stays in writing, your name on the catch.',
+          label: 'Hold the line',
+          detail: 'corrected number stays in writing, your name on the catch',
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'fallout_fight_hold',
         },
         {
-          label: 'Stand down. Apologize for the timing; let the chief of staff own it.',
+          label: 'Stand down',
+          detail: 'apologize for the timing, let the chief of staff own it',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'fallout_fight_fold',
         },
@@ -111,12 +118,14 @@ export const ordeal1: Scene = {
       ],
       choices: [
         {
-          label: 'Let it ride. Nod, eat it whole, keep the room calm.',
+          label: 'Let it ride',
+          detail: 'nod, eat it whole, keep the room calm',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'fallout_absorb_eat',
         },
         {
-          label: 'After standup, walk your manager through the join — factual, on record.',
+          label: 'Walk your manager through the join',
+          detail: 'after standup, factual, on record',
           deltas: { survivability: 1, self_advocacy: 3 },
           to: 'fallout_absorb_reclaim',
         },
@@ -134,12 +143,14 @@ export const ordeal1: Scene = {
       ],
       choices: [
         {
-          label: 'Defer. Let them frame it; trust them to credit you when it counts.',
+          label: 'Let them frame it',
+          detail: 'trust them to credit you when it counts',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'fallout_channel_defer',
         },
         {
-          label: 'Ask the catch go on record under your name — framing stays theirs.',
+          label: 'Ask for your name on the catch',
+          detail: 'on record — the framing stays theirs',
           deltas: { survivability: 1, self_advocacy: 2 },
           to: 'fallout_channel_record',
         },
@@ -151,8 +162,7 @@ export const ordeal1: Scene = {
       id: 'fallout_fight_hold',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'narration', text: 'Monday the board gets the truth in full, traceable to you.' },
-        { kind: 'message', from: 'Manager', via: 'dm', text: "CFO wasn't mad about the number — about reading it cold in an open channel before anyone could frame it." },
+        { kind: 'message', from: 'Manager', via: 'dm', text: "Board got the correction Monday, traceable to you. CFO wasn't mad about the number — about reading it cold in the open channel before anyone could frame it." },
         { kind: 'narration', text: 'Tuesday standup, two people glance at you before they speak. The number was right. You are still the one holding it.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
@@ -161,8 +171,7 @@ export const ordeal1: Scene = {
       id: 'fallout_fight_fold',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'narration', text: 'You apologize for the timing. Your manager exhales — you hear the whole weight leave the call.' },
-        { kind: 'narration', text: 'Monday the CFO restates it, clean and senior; the catch reads as the org\'s. Nobody is mad anymore, and that feels good.' },
+        { kind: 'narration', text: 'You apologize for the timing; your manager exhales. Monday the chief of staff restates it, clean and senior, and the catch reads as the org\'s. Nobody is mad anymore.' },
         { kind: 'narration', text: 'Then you scroll the thread where your name has quietly stopped appearing — the part that was yours, now smoothly not.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
@@ -171,9 +180,8 @@ export const ordeal1: Scene = {
       id: 'fallout_absorb_eat',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'narration', text: 'You let it stand. The senior analyst gives you a small grateful nod.' },
-        { kind: 'message', from: 'Manager', via: 'dm', text: 'CFO heard it was a new-hire dashboard slip, already handled. Nothing structural. He\'s satisfied.' },
-        { kind: 'narration', text: 'No enemies, nobody mad. But "the new person\'s dashboard was off" got said out loud, half of it never yours — and you can still hear it.' },
+        { kind: 'narration', text: 'You let it stand. The senior analyst gives you a small grateful nod; the CFO hears it was a handled new-hire slip and moves on. No enemies, nobody mad.' },
+        { kind: 'narration', text: 'But "the new person\'s dashboard was off" got said out loud, half of it never yours — and you can still hear it.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -181,8 +189,7 @@ export const ordeal1: Scene = {
       id: 'fallout_absorb_reclaim',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'message', from: 'You', via: 'dm', text: 'Quick note on the dashboard: dup-prone rows came from the upstream pipeline; the missing de-dup was mine. Wanted both on record.', self: true },
-        { kind: 'narration', text: 'Your manager gets it — who owns which half — and fields the CFO\'s "how did 12% clear two layers" naming both.' },
+        { kind: 'message', from: 'You', via: 'dm', text: 'Quick note on the dashboard: the dup-prone rows came from the upstream pipeline; the missing de-dup was mine. Wanted both halves on record.', self: true },
         { kind: 'narration', text: 'For days you brace for an angry email from the senior analyst that never comes. You didn\'t feel brave. But the record is true.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
@@ -192,8 +199,7 @@ export const ordeal1: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: 'Handled. Framed it as "a refinement we caught." No team named, no drama. You\'re covered.' },
-        { kind: 'narration', text: 'The catch becomes the org\'s. The week is calm; you\'re protected, well-liked.' },
-        { kind: 'narration', text: 'That night you open a blank note to write down what really happened — and close it without typing. You did catch it. Only two of you know.' },
+        { kind: 'narration', text: 'The catch becomes the org\'s. That night you open a blank note to write down what really happened — and close it without typing. You did catch it. Only two of you know.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -202,8 +208,7 @@ export const ordeal1: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: 'Fine — one line of credit to you. Team stays unnamed though.' },
-        { kind: 'narration', text: 'A beat before he agreed, just long enough to feel. You spent a little of his patience asking.' },
-        { kind: 'narration', text: 'Monday the catch ships with a name on it: yours. One line nobody rereads. You reopen the deck Tuesday and it\'s still there — lighter than you\'d have guessed.' },
+        { kind: 'narration', text: 'A beat before he agreed, just long enough to feel; you spent a little of his patience asking. Monday the catch ships with a name on it: yours, one line nobody rereads. You reopen the deck Tuesday and it\'s still there — lighter than you\'d have guessed.' },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -211,10 +216,15 @@ export const ordeal1: Scene = {
     {
       id: 'result',
       blocks: [
-        { kind: 'narration', text: 'The numbers were the easy bit. The room was the real puzzle.' },
-        { kind: 'narration', text: 'Your first move set your stance; the second, under new pressure, revealed you.' },
-        { kind: 'narration', text: 'There was no single answer that won everything at once.' },
+        { kind: 'narration', text: 'The de-dup bug took four seconds to spot. Who would be holding it by Monday took the whole weekend.' },
+        { kind: 'narration', text: 'Every honest move here cost you cover; every safe move cost you the record. You picked which one you could live with.' },
+        { kind: 'narration', text: 'Six weeks in, and the spreadsheet was never the part they should have warned you about.' },
       ],
     },
+  ],
+  moments: [
+    "The Monday-morning call",
+    "'the new person's dashboard'",
+    'Your name, quietly gone',
   ],
 };

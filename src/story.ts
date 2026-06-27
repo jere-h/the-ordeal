@@ -11,6 +11,7 @@ export class StoryEngine {
   private current: string;
   private readonly start: string;
   private readonly byId: Map<string, Passage>;
+  private readonly _moments: string[];
   private readonly acc: Deltas = { survivability: 0, self_advocacy: 0 };
 
   constructor(scene: Scene) {
@@ -20,6 +21,7 @@ export class StoryEngine {
     }
     this.start = scene.start;
     this.current = scene.start;
+    this._moments = scene.moments ?? [];
   }
 
   private passage(): Passage {
@@ -43,8 +45,13 @@ export class StoryEngine {
     return this.passage().blocks.map(blockText).join('\n\n');
   }
 
-  currentChoices(): { label: string }[] {
-    return (this.passage().choices ?? []).map((c) => ({ label: c.label }));
+  currentChoices(): { label: string; detail?: string }[] {
+    return (this.passage().choices ?? []).map((c) => ({ label: c.label, detail: c.detail }));
+  }
+
+  /** The scene's optional one-tap "which moment hit?" chips, for the result screen. */
+  moments(): string[] {
+    return this._moments;
   }
 
   choose(index: number): void {

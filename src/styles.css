@@ -173,6 +173,15 @@ body {
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* The phase name (The mistake → The escalation → The fallout) carries the spine. */
+.beat-phase {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.beat-count {
   color: var(--muted);
 }
 
@@ -205,10 +214,13 @@ body {
 .msg--dm { border-left-color: var(--dm); }
 .msg--standup { border-left-color: var(--standup); }
 
+/* Your own sent messages pull hard to the right and cap their width, so "this is
+   me in the conversation" reads at a glance (the thread is a flex column). */
 .msg--self {
   background: var(--bubble-self);
   border-left-color: var(--call);
-  margin-left: 1.5rem;
+  align-self: flex-end;
+  max-width: 85%;
 }
 
 .msg-head {
@@ -259,7 +271,7 @@ body {
 .msg-body {
   margin: 0;
   font-size: 1rem;
-  line-height: 1.4;
+  line-height: 1.45; /* one body leading shared with narration, so the column reads even */
 }
 
 /* ---- data / query-result chip ---- */
@@ -286,8 +298,10 @@ body {
   font-size: 0.86rem;
   line-height: 1.5;
   color: var(--ink);
-  white-space: pre-wrap;
-  word-break: break-word;
+  /* A query result is a fixed-width artifact — let it scroll, not reflow into
+     nonsense, so aligned tables (e.g. ordeal3's cut) survive a narrow phone. */
+  white-space: pre;
+  overflow-x: auto;
 }
 
 /* ---- action dock: where the story stops and your move begins ---- */
@@ -336,6 +350,26 @@ body {
   transition: border-color 0.15s, transform 0.05s, background 0.15s, box-shadow 0.15s;
 }
 
+/* Hybrid label: a punchy lead the eye catches, with the nuance as quiet sub-text
+   — scannable without losing the authored texture. */
+.choice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.choice-lead {
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.choice-detail {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
 /* Trailing chevron: a clear "tap me" affordance the passive bubbles don't have. */
 .choice::after {
   content: '→';
@@ -361,6 +395,27 @@ body {
 
 .choice:active {
   transform: translateY(1px);
+}
+
+/* The commit beat: the picked move locks in and the roads not taken fade for a
+   moment before the consequence arrives — so a decision is felt, not swap-cut. */
+.choice--chosen {
+  border-color: var(--accent);
+  background: #2b313c;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.choice--chosen::after {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.choice--faded {
+  opacity: 0.3;
+}
+
+.choice:disabled {
+  cursor: default;
 }
 
 /* ---- result ---- */
@@ -410,8 +465,10 @@ body {
   fill: currentColor;
 }
 
+/* Demoted: the number is a footnote to the bar's shape, not a grade to chase. */
 .axis-value {
-  color: var(--accent);
+  color: var(--muted);
+  font-size: 0.82rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -448,11 +505,81 @@ body {
   margin: 0 0 1.3rem;
 }
 
+.reflect-block {
+  margin-bottom: 0.4rem;
+}
+
 .reflect-label {
   display: block;
   font-size: 0.9rem;
   color: var(--muted);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+/* One-tap "which moment hit?" — pills of real beats, not an essay box. */
+.moment-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.moment-chip {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--bubble);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.moment-chip:hover {
+  border-color: var(--accent);
+}
+
+.moment-chip.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.moment-ack {
+  min-height: 1.1rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* The note is opt-in and out of the way — open it only if you want to write. */
+.note-toggle {
+  margin-top: 0.6rem;
+}
+
+.note-summary {
+  font-size: 0.82rem;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+}
+
+.note-summary::-webkit-details-marker {
+  display: none;
+}
+
+.note-summary::before {
+  content: '+ ';
+  color: var(--accent);
+}
+
+.note-toggle[open] .note-summary::before {
+  content: '– ';
+}
+
+.note-toggle[open] .note-summary {
+  margin-bottom: 0.5rem;
 }
 
 .reflect {
@@ -465,6 +592,15 @@ body {
   border-radius: 8px;
   padding: 0.7rem;
   resize: vertical;
+}
+
+/* A quiet nudge that the unchosen paths exist — replay as curiosity, not a score. */
+.replay-hint {
+  margin: 1.3rem 0 0;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--muted);
+  text-align: center;
 }
 
 .next {
@@ -538,4 +674,13 @@ body {
   border-radius: 6px;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
+}
+
+/* Respect a reduced-motion preference: no hover/commit transitions or shifts.
+   (The renderer also skips the commit-beat pause when this is set.) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

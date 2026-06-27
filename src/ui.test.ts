@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ordeal1 } from './scenes/ordeal1';
 import { StoryEngine } from './story';
 import { UIRenderer } from './ui';
 
 /** Full DOM play-through in jsdom: render → first choice → second decision →
- *  continue → assert the messaged rendering, scores, and the next-ordeal hand-off. */
+ *  continue → assert the messaged rendering, scores, and the next-ordeal hand-off.
+ *  Tests pass `commitDelayMs: 0` so the commit beat resolves synchronously. */
 describe('UI play-through (DOM)', () => {
   let root: HTMLElement;
 
@@ -15,9 +16,11 @@ describe('UI play-through (DOM)', () => {
   });
 
   const ctx = (over: Record<string, unknown> = {}) => ({ ordealId: 'ordeal1', ...over });
+  const render = (engine: StoryEngine, c: ReturnType<typeof ctx>) =>
+    new UIRenderer(root, engine, c, { commitDelayMs: 0 });
 
   it('separates the story thread from a labeled action dock holding the choices', () => {
-    new UIRenderer(root, new StoryEngine(ordeal1), ctx()).render();
+    render(new StoryEngine(ordeal1), ctx()).render();
 
     const actions = root.querySelector('.actions');
     expect(actions).not.toBeNull();
@@ -28,8 +31,14 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelector('.thread')?.querySelector('button.choice')).toBeNull();
   });
 
+  it('renders hybrid choice labels: a punchy lead with optional detail sub-line', () => {
+    render(new StoryEngine(ordeal1), ctx()).render();
+    expect(root.querySelector('button.choice .choice-lead')).not.toBeNull();
+    expect(root.querySelectorAll('.choice-detail').length).toBeGreaterThan(0);
+  });
+
   it('renders the setup beat with a data chip and four choice buttons', () => {
-    new UIRenderer(root, new StoryEngine(ordeal1), ctx()).render();
+    render(new StoryEngine(ordeal1), ctx()).render();
 
     expect(root.querySelectorAll('button.choice')).toHaveLength(4);
     expect(root.querySelector('.beat-label')?.textContent).toContain('The mistake · 1 of 3');
@@ -39,15 +48,34 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelector('.narration')?.textContent).toContain('six weeks in');
   });
 
+  it('commits a choice with a beat: fades the unchosen and advances only after the delay', () => {
+    vi.useFakeTimers();
+    try {
+      new UIRenderer(root, new StoryEngine(ordeal1), ctx(), { commitDelayMs: 400 }).render();
+      (root.querySelectorAll('button.choice')[0] as HTMLButtonElement).click();
+
+      // The picked move locks in, the others fade, and we have NOT advanced yet.
+      expect(root.querySelector('.choice--chosen')).not.toBeNull();
+      expect(root.querySelectorAll('.choice--faded')).toHaveLength(3);
+      expect((root.querySelectorAll('button.choice')[0] as HTMLButtonElement).disabled).toBe(true);
+      expect(root.querySelector('.beat-label')?.textContent).toContain('1 of 3');
+
+      vi.advanceTimersByTime(400);
+      expect(root.querySelector('.beat-label')?.textContent).toContain('2 of 3');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   function playEscalateDefer(resultCtx: ReturnType<typeof ctx>) {
-    new UIRenderer(root, new StoryEngine(ordeal1), resultCtx).render();
+    render(new StoryEngine(ordeal1), resultCtx).render();
     (root.querySelectorAll('button.choice')[2] as HTMLButtonElement).click(); // ESCALATE
     (root.querySelectorAll('button.choice')[0] as HTMLButtonElement).click(); // defer
     (root.querySelectorAll('button.choice')[0] as HTMLButtonElement).click(); // continue
   }
 
   it('renders escalation messages as bubbles and plays through to a result with both axes', () => {
-    new UIRenderer(root, new StoryEngine(ordeal1), ctx()).render();
+    render(new StoryEngine(ordeal1), ctx()).render();
 
     (root.querySelectorAll('button.choice')[2] as HTMLButtonElement).click();
     expect(root.querySelector('.beat-label')?.textContent).toContain('The escalation · 2 of 3');
@@ -68,17 +96,32 @@ describe('UI play-through (DOM)', () => {
     expect(root.querySelector('button.cta')).toBeNull(); // CTA removed
   });
 
-  it('shows a "Next ordeal →" hand-off that advances when there is a next ordeal', () => {
+  it('offers a one-tap moment picker on the result and records the pick (no forced typing)', () => {
+    playEscalateDefer(ctx());
+
+    const chips = root.querySelectorAll('button.moment-chip');
+    expect(chips.length).toBe(3);
+    // The free-text note is opt-in: present but collapsed inside <details>, not forced.
+    expect(root.querySelector('details.note-toggle')?.hasAttribute('open')).toBe(false);
+
+    (chips[0] as HTMLButtonElement).click();
+    expect(root.querySelectorAll('.moment-chip.selected')).toHaveLength(1);
+    expect(localStorage.getItem('ordeal1-moment')).toBe(chips[0].textContent);
+    expect(root.querySelector('.moment-ack')?.textContent).toContain('stays');
+  });
+
+  it('shows a "Next ordeal →" hand-off that advances and records the CTA pull signal', () => {
     let advanced = false;
-    playEscalateDefer(ctx({ nextTitle: 'The dashboard nobody used', onNext: () => (advanced = true) }));
+    playEscalateDefer(ctx({ nextTitle: 'The wrong number', onNext: () => (advanced = true) }));
 
     const next = root.querySelector('button.next') as HTMLButtonElement;
     expect(next).not.toBeNull();
-    expect(next.textContent).toContain('Next ordeal → The dashboard nobody used');
+    expect(next.textContent).toContain('Next ordeal → The wrong number');
     expect(root.querySelector('.teaser')).toBeNull();
 
     next.click();
     expect(advanced).toBe(true);
+    expect(JSON.parse(localStorage.getItem('ordeal1-pull')!).cta_clicks).toBe(1);
   });
 
   it('shows the teaser (no hand-off button) when there is no next ordeal', () => {

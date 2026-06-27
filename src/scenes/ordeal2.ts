@@ -59,22 +59,27 @@ export const ordeal2: Scene = {
       ],
       choices: [
         {
-          label: 'Post in-channel: link the dashboard, ask why it\'s being sunset before anyone tried it.',
+          label: 'Link it in-channel',
+          detail: "ask why it's being sunset before anyone tried it",
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'esc_press',
         },
         {
-          label: 'DM the PM, low-key: "saw the sunset note — what did the dash miss for you?"',
+          label: 'DM the PM, low-key',
+          detail: '"saw the sunset note — what did the dash miss for you?"',
           deltas: { survivability: 1, self_advocacy: 2 },
           to: 'esc_probe',
         },
+        // hidden-trap: reads principled, costs credit
         {
-          label: 'Bring it to your manager first: ask how to make it land, not who killed it.',
+          label: 'Take it to your manager first',
+          detail: 'ask how to make it land, not who killed it',
           deltas: { survivability: 2, self_advocacy: 1 },
           to: 'esc_let',
         },
         {
-          label: 'Let it go. It got built, it works; quietly archive it and move on.',
+          label: 'Let it go, move on',
+          detail: 'it got built, it works; quietly archive it',
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'esc_let',
         },
@@ -93,12 +98,14 @@ export const ordeal2: Scene = {
       ],
       choices: [
         {
-          label: 'Defend the work: "fair — tier\'s a nastier join than cohort, but I can have a v1 by tomorrow. Don\'t sunset it yet."',
+          label: 'Defend the work',
+          detail: '"tier\'s a nastier join, but I\'ll have a v1 tomorrow — don\'t sunset it yet"',
           deltas: { survivability: 0, self_advocacy: 3 },
           to: 'fallout_press_defend',
         },
         {
-          label: 'Pivot openly: "you\'re right, wrong cut. Let me rebuild it around plan tier with you."',
+          label: 'Concede the point openly',
+          detail: '"you\'re right, wrong cut — let me rebuild it by tier with you"',
           deltas: { survivability: 3, self_advocacy: 1 },
           to: 'fallout_press_pivot',
         },
@@ -116,12 +123,14 @@ export const ordeal2: Scene = {
       ],
       choices: [
         {
-          label: 'Defend it: ask the PM to hold the sunset, name in the doc that you\'ll re-cut it by tier.',
+          label: 'Put your name on the fix',
+          detail: 'ask the PM to hold the sunset, note in the doc that you\'ll re-cut it',
           deltas: { survivability: 1, self_advocacy: 3 },
           to: 'fallout_probe_defend',
         },
         {
-          label: 'Pivot quietly: "let me fix the cut," no fuss about the doc or who decided.',
+          label: 'Just fix the cut, quietly',
+          detail: 'no fuss about the doc or who decided',
           deltas: { survivability: 3, self_advocacy: 1 },
           to: 'fallout_probe_pivot',
         },
@@ -140,12 +149,14 @@ export const ordeal2: Scene = {
       ],
       choices: [
         {
-          label: 'Reframe it as yours: "I\'ll own the exec report — and fold the dash into it, by tier."',
+          label: 'Claim the bigger thing',
+          detail: '"I\'ll own the exec report — and fold the dash into it, by tier"',
           deltas: { survivability: 2, self_advocacy: 2 },
           to: 'fallout_let_reframe',
         },
         {
-          label: 'Take it quietly: nod, take the report, don\'t bring up the dashboard again.',
+          label: 'Take it quietly',
+          detail: "nod, take the report, don't raise the dashboard again",
           deltas: { survivability: 3, self_advocacy: 0 },
           to: 'fallout_let_quiet',
         },
@@ -158,8 +169,7 @@ export const ordeal2: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'PM', via: 'slack', text: "ok — one day. send it by tier and we'll keep it." },
-        { kind: 'narration', text: "You ship the tier cut next morning; the sunset line vanishes from the doc. You held your work in the open and it survived." },
-        { kind: 'narration', text: "Tuesday standup, the senior analyst is a half-degree cooler. The dash lives. Your manager doesn't say anything about how you raised it — which is its own kind of saying something: you're now the hire who litigates in-channel rather than quietly." },
+        { kind: 'narration', text: "You ship the tier cut next morning and the sunset line vanishes. The dash lives. Tuesday standup the senior analyst is a half-degree cooler, and your manager says nothing about how you raised it — which is its own kind of saying something: you're now the hire who litigates in-channel rather than quietly." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -168,8 +178,7 @@ export const ordeal2: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Senior analyst', via: 'slack', text: "appreciate that. let's pair on the tier version — I'll send you how I cut it by hand." },
-        { kind: 'narration', text: "The room relaxes; conceding fast in public reads as easy to work with. You and the senior rebuild it together." },
-        { kind: 'narration', text: "The new dash is half theirs now, and so is the credit. It'll get used. You wonder, quietly, what holding the line one more beat would've kept." },
+        { kind: 'narration', text: "Conceding fast in public reads as easy to work with, and you rebuild it together. The new dash is half theirs now, and so is the credit. It'll get used. You wonder, quietly, what holding the line one more beat would've kept." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -178,8 +187,7 @@ export const ordeal2: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'PM', via: 'dm', text: "done — I edited the doc: 'on hold, re-cut by tier (you).' fair enough?" },
-        { kind: 'narration', text: "Your name is on the fix in the doc that nearly buried the work. You didn't make a scene; you made a record." },
-        { kind: 'narration', text: "The PM stays warm. The senior analyst, who'd quietly written the sunset line, never mentions it. You can't tell if the silence was merit or just nobody's job to tell you. The dash is yours again." },
+        { kind: 'narration', text: "You didn't make a scene; you made a record, your name on the fix in the doc that nearly buried the work. The PM stays warm; the senior who wrote the sunset line never mentions it. You can't tell if the silence was merit or just nobody's job to tell you. The dash is yours again." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -187,8 +195,7 @@ export const ordeal2: Scene = {
       id: 'fallout_probe_pivot',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'narration', text: "You fix the cut over two evenings and reshare it, no fanfare. The PM thanks you; the sunset line just quietly goes stale." },
-        { kind: 'narration', text: "It works now, and it'll get used. Calm, clean, no friction with anyone." },
+        { kind: 'narration', text: "You fix the cut over two evenings and reshare it, no fanfare. The PM thanks you; the sunset line quietly goes stale. Calm, clean, no friction with anyone." },
         { kind: 'narration', text: "But the doc still reads like the dash was a miss someone generously let you patch. You know the question moved, not your work. Only you know." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
@@ -198,8 +205,7 @@ export const ordeal2: Scene = {
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
         { kind: 'message', from: 'Manager', via: 'dm', text: "Good — make it yours. I'll say in planning you're picking up the exec report." },
-        { kind: 'narration', text: "You take the bigger thing and fold the dead dash into it, by tier. The sunset stops being a failure and starts being a footnote in something you own." },
-        { kind: 'narration', text: "It's a real swing now, and a real way to fall short. You don't get to keep the old work clean — you get to make the next one matter." },
+        { kind: 'narration', text: "You fold the dead dash into the bigger thing, by tier, and the sunset stops being a failure and becomes a footnote in something you own. It's a real swing now, and a real way to fall short. You don't get to keep the old work clean — you get to make the next one matter." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -207,9 +213,8 @@ export const ordeal2: Scene = {
       id: 'fallout_let_quiet',
       beat: { n: 3, of: 3, label: 'The fallout' },
       blocks: [
-        { kind: 'narration', text: "You take the report and let the dashboard go without another word. Your manager looks relieved; nothing got litigated." },
         { kind: 'message', from: 'Manager', via: 'dm', text: "Good call not making it a thing. Fresh start on the report." },
-        { kind: 'narration', text: "You're trusted, easy, out of it. The first thing you ever shipped here got archived and you said nothing — and a small part of you files that away for next time." },
+        { kind: 'narration', text: "You archive it yourself. Final usage: four views, three of them you — the most loyal user it ever had, switching off its life support. You're trusted, easy, out of it. The first thing you ever shipped here got buried and you said nothing — and a small part of you files that away for next time." },
       ],
       choices: [{ label: 'See where that leaves you', deltas: { survivability: 0, self_advocacy: 0 }, to: 'result' }],
     },
@@ -217,10 +222,15 @@ export const ordeal2: Scene = {
     {
       id: 'result',
       blocks: [
-        { kind: 'narration', text: "Shipping was never the hard part. Getting the thing used — and getting seen for it — was the whole game." },
-        { kind: 'narration', text: "Your first move set your stance on the silence; the second, once you knew what it really missed, revealed you." },
-        { kind: 'narration', text: "Merit or politics, you never quite got to know. No single move won both the room and the record." },
+        { kind: 'narration', text: "Three views. The thing you built worked perfectly and answered a question the team had quietly stopped asking." },
+        { kind: 'narration', text: "Shipping it was the easy half; getting it used, and getting seen for it, was the half nobody graded you on in school." },
+        { kind: 'narration', text: "Merit or politics — you finished without ever finding out which one buried it. Some weeks that's just the job." },
       ],
     },
+  ],
+  moments: [
+    "'total views: 3'",
+    'The sunset note you found by accident',
+    'Switching off its life support',
   ],
 };
