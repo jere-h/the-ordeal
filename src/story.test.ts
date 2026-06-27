@@ -59,6 +59,16 @@ const EXPECTED_TOTALS: Record<string, { survivability: number; self_advocacy: nu
     { survivability: 5, self_advocacy: 2 },
     { survivability: 6, self_advocacy: 0 },
   ],
+  ordeal3: [
+    { survivability: 0, self_advocacy: 6 },
+    { survivability: 3, self_advocacy: 4 },
+    { survivability: 2, self_advocacy: 5 },
+    { survivability: 4, self_advocacy: 3 },
+    { survivability: 4, self_advocacy: 3 },
+    { survivability: 5, self_advocacy: 1 },
+    { survivability: 5, self_advocacy: 2 },
+    { survivability: 6, self_advocacy: 0 },
+  ],
 };
 
 // Run the same structural + calibration invariants over every authored ordeal.
